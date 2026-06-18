@@ -22,6 +22,7 @@ import { Route as FaqRouteImport } from './routes/faq'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ComplaintsRouteImport } from './routes/complaints'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TrucksIndexRouteImport } from './routes/trucks.index'
 import { Route as OrdersIndexRouteImport } from './routes/orders.index'
@@ -29,6 +30,7 @@ import { Route as TrucksNewRouteImport } from './routes/trucks.new'
 import { Route as TrucksIdRouteImport } from './routes/trucks.$id'
 import { Route as OrdersNewRouteImport } from './routes/orders.new'
 import { Route as OrdersIdRouteImport } from './routes/orders.$id'
+import { Route as OrdersIdEditRouteImport } from './routes/orders.$id.edit'
 
 const SubscriptionRoute = SubscriptionRouteImport.update({
   id: '/subscription',
@@ -95,6 +97,11 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -130,9 +137,15 @@ const OrdersIdRoute = OrdersIdRouteImport.update({
   path: '/orders/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OrdersIdEditRoute = OrdersIdEditRouteImport.update({
+  id: '/edit',
+  path: '/edit',
+  getParentRoute: () => OrdersIdRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/complaints': typeof ComplaintsRoute
   '/contact': typeof ContactRoute
@@ -146,15 +159,17 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRoute
   '/statistics': typeof StatisticsRoute
   '/subscription': typeof SubscriptionRoute
-  '/orders/$id': typeof OrdersIdRoute
+  '/orders/$id': typeof OrdersIdRouteWithChildren
   '/orders/new': typeof OrdersNewRoute
   '/trucks/$id': typeof TrucksIdRoute
   '/trucks/new': typeof TrucksNewRoute
   '/orders/': typeof OrdersIndexRoute
   '/trucks/': typeof TrucksIndexRoute
+  '/orders/$id/edit': typeof OrdersIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/complaints': typeof ComplaintsRoute
   '/contact': typeof ContactRoute
@@ -168,16 +183,18 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsRoute
   '/statistics': typeof StatisticsRoute
   '/subscription': typeof SubscriptionRoute
-  '/orders/$id': typeof OrdersIdRoute
+  '/orders/$id': typeof OrdersIdRouteWithChildren
   '/orders/new': typeof OrdersNewRoute
   '/trucks/$id': typeof TrucksIdRoute
   '/trucks/new': typeof TrucksNewRoute
   '/orders': typeof OrdersIndexRoute
   '/trucks': typeof TrucksIndexRoute
+  '/orders/$id/edit': typeof OrdersIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/complaints': typeof ComplaintsRoute
   '/contact': typeof ContactRoute
@@ -191,17 +208,19 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRoute
   '/statistics': typeof StatisticsRoute
   '/subscription': typeof SubscriptionRoute
-  '/orders/$id': typeof OrdersIdRoute
+  '/orders/$id': typeof OrdersIdRouteWithChildren
   '/orders/new': typeof OrdersNewRoute
   '/trucks/$id': typeof TrucksIdRoute
   '/trucks/new': typeof TrucksNewRoute
   '/orders/': typeof OrdersIndexRoute
   '/trucks/': typeof TrucksIndexRoute
+  '/orders/$id/edit': typeof OrdersIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
     | '/auth'
     | '/complaints'
     | '/contact'
@@ -221,9 +240,11 @@ export interface FileRouteTypes {
     | '/trucks/new'
     | '/orders/'
     | '/trucks/'
+    | '/orders/$id/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/admin'
     | '/auth'
     | '/complaints'
     | '/contact'
@@ -243,9 +264,11 @@ export interface FileRouteTypes {
     | '/trucks/new'
     | '/orders'
     | '/trucks'
+    | '/orders/$id/edit'
   id:
     | '__root__'
     | '/'
+    | '/admin'
     | '/auth'
     | '/complaints'
     | '/contact'
@@ -265,10 +288,12 @@ export interface FileRouteTypes {
     | '/trucks/new'
     | '/orders/'
     | '/trucks/'
+    | '/orders/$id/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
   AuthRoute: typeof AuthRoute
   ComplaintsRoute: typeof ComplaintsRoute
   ContactRoute: typeof ContactRoute
@@ -282,7 +307,7 @@ export interface RootRouteChildren {
   SettingsRoute: typeof SettingsRoute
   StatisticsRoute: typeof StatisticsRoute
   SubscriptionRoute: typeof SubscriptionRoute
-  OrdersIdRoute: typeof OrdersIdRoute
+  OrdersIdRoute: typeof OrdersIdRouteWithChildren
   OrdersNewRoute: typeof OrdersNewRoute
   TrucksIdRoute: typeof TrucksIdRoute
   TrucksNewRoute: typeof TrucksNewRoute
@@ -383,6 +408,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -432,11 +464,31 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrdersIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/orders/$id/edit': {
+      id: '/orders/$id/edit'
+      path: '/edit'
+      fullPath: '/orders/$id/edit'
+      preLoaderRoute: typeof OrdersIdEditRouteImport
+      parentRoute: typeof OrdersIdRoute
+    }
   }
 }
 
+interface OrdersIdRouteChildren {
+  OrdersIdEditRoute: typeof OrdersIdEditRoute
+}
+
+const OrdersIdRouteChildren: OrdersIdRouteChildren = {
+  OrdersIdEditRoute: OrdersIdEditRoute,
+}
+
+const OrdersIdRouteWithChildren = OrdersIdRoute._addFileChildren(
+  OrdersIdRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
   AuthRoute: AuthRoute,
   ComplaintsRoute: ComplaintsRoute,
   ContactRoute: ContactRoute,
@@ -450,7 +502,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsRoute: SettingsRoute,
   StatisticsRoute: StatisticsRoute,
   SubscriptionRoute: SubscriptionRoute,
-  OrdersIdRoute: OrdersIdRoute,
+  OrdersIdRoute: OrdersIdRouteWithChildren,
   OrdersNewRoute: OrdersNewRoute,
   TrucksIdRoute: TrucksIdRoute,
   TrucksNewRoute: TrucksNewRoute,
