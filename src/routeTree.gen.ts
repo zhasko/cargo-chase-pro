@@ -10,6 +10,8 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SubscriptionRouteImport } from './routes/subscription'
+import { Route as StatisticsRouteImport } from './routes/statistics'
+import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PaymentsRouteImport } from './routes/payments'
@@ -18,6 +20,7 @@ import { Route as MyCargoRouteImport } from './routes/my-cargo'
 import { Route as FavoritesRouteImport } from './routes/favorites'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as ComplaintsRouteImport } from './routes/complaints'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TrucksIndexRouteImport } from './routes/trucks.index'
@@ -30,6 +33,16 @@ import { Route as OrdersIdRouteImport } from './routes/orders.$id'
 const SubscriptionRoute = SubscriptionRouteImport.update({
   id: '/subscription',
   path: '/subscription',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StatisticsRoute = StatisticsRouteImport.update({
+  id: '/statistics',
+  path: '/statistics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProfileRoute = ProfileRouteImport.update({
@@ -70,6 +83,11 @@ const FaqRoute = FaqRouteImport.update({
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ComplaintsRoute = ComplaintsRouteImport.update({
+  id: '/complaints',
+  path: '/complaints',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -116,6 +134,7 @@ const OrdersIdRoute = OrdersIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/complaints': typeof ComplaintsRoute
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
   '/favorites': typeof FavoritesRoute
@@ -124,6 +143,8 @@ export interface FileRoutesByFullPath {
   '/payments': typeof PaymentsRoute
   '/pricing': typeof PricingRoute
   '/profile': typeof ProfileRoute
+  '/settings': typeof SettingsRoute
+  '/statistics': typeof StatisticsRoute
   '/subscription': typeof SubscriptionRoute
   '/orders/$id': typeof OrdersIdRoute
   '/orders/new': typeof OrdersNewRoute
@@ -135,6 +156,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/complaints': typeof ComplaintsRoute
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
   '/favorites': typeof FavoritesRoute
@@ -143,6 +165,8 @@ export interface FileRoutesByTo {
   '/payments': typeof PaymentsRoute
   '/pricing': typeof PricingRoute
   '/profile': typeof ProfileRoute
+  '/settings': typeof SettingsRoute
+  '/statistics': typeof StatisticsRoute
   '/subscription': typeof SubscriptionRoute
   '/orders/$id': typeof OrdersIdRoute
   '/orders/new': typeof OrdersNewRoute
@@ -155,6 +179,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/complaints': typeof ComplaintsRoute
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
   '/favorites': typeof FavoritesRoute
@@ -163,6 +188,8 @@ export interface FileRoutesById {
   '/payments': typeof PaymentsRoute
   '/pricing': typeof PricingRoute
   '/profile': typeof ProfileRoute
+  '/settings': typeof SettingsRoute
+  '/statistics': typeof StatisticsRoute
   '/subscription': typeof SubscriptionRoute
   '/orders/$id': typeof OrdersIdRoute
   '/orders/new': typeof OrdersNewRoute
@@ -176,6 +203,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/complaints'
     | '/contact'
     | '/faq'
     | '/favorites'
@@ -184,6 +212,8 @@ export interface FileRouteTypes {
     | '/payments'
     | '/pricing'
     | '/profile'
+    | '/settings'
+    | '/statistics'
     | '/subscription'
     | '/orders/$id'
     | '/orders/new'
@@ -195,6 +225,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/complaints'
     | '/contact'
     | '/faq'
     | '/favorites'
@@ -203,6 +234,8 @@ export interface FileRouteTypes {
     | '/payments'
     | '/pricing'
     | '/profile'
+    | '/settings'
+    | '/statistics'
     | '/subscription'
     | '/orders/$id'
     | '/orders/new'
@@ -214,6 +247,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/auth'
+    | '/complaints'
     | '/contact'
     | '/faq'
     | '/favorites'
@@ -222,6 +256,8 @@ export interface FileRouteTypes {
     | '/payments'
     | '/pricing'
     | '/profile'
+    | '/settings'
+    | '/statistics'
     | '/subscription'
     | '/orders/$id'
     | '/orders/new'
@@ -234,6 +270,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
+  ComplaintsRoute: typeof ComplaintsRoute
   ContactRoute: typeof ContactRoute
   FaqRoute: typeof FaqRoute
   FavoritesRoute: typeof FavoritesRoute
@@ -242,6 +279,8 @@ export interface RootRouteChildren {
   PaymentsRoute: typeof PaymentsRoute
   PricingRoute: typeof PricingRoute
   ProfileRoute: typeof ProfileRoute
+  SettingsRoute: typeof SettingsRoute
+  StatisticsRoute: typeof StatisticsRoute
   SubscriptionRoute: typeof SubscriptionRoute
   OrdersIdRoute: typeof OrdersIdRoute
   OrdersNewRoute: typeof OrdersNewRoute
@@ -258,6 +297,20 @@ declare module '@tanstack/react-router' {
       path: '/subscription'
       fullPath: '/subscription'
       preLoaderRoute: typeof SubscriptionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/statistics': {
+      id: '/statistics'
+      path: '/statistics'
+      fullPath: '/statistics'
+      preLoaderRoute: typeof StatisticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/profile': {
@@ -314,6 +367,13 @@ declare module '@tanstack/react-router' {
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/complaints': {
+      id: '/complaints'
+      path: '/complaints'
+      fullPath: '/complaints'
+      preLoaderRoute: typeof ComplaintsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -378,6 +438,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
+  ComplaintsRoute: ComplaintsRoute,
   ContactRoute: ContactRoute,
   FaqRoute: FaqRoute,
   FavoritesRoute: FavoritesRoute,
@@ -386,6 +447,8 @@ const rootRouteChildren: RootRouteChildren = {
   PaymentsRoute: PaymentsRoute,
   PricingRoute: PricingRoute,
   ProfileRoute: ProfileRoute,
+  SettingsRoute: SettingsRoute,
+  StatisticsRoute: StatisticsRoute,
   SubscriptionRoute: SubscriptionRoute,
   OrdersIdRoute: OrdersIdRoute,
   OrdersNewRoute: OrdersNewRoute,
