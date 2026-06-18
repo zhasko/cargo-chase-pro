@@ -6,8 +6,8 @@ import { CargoCard } from "@/components/CargoCard";
 import { TruckCard } from "@/components/TruckCard";
 import { Icon } from "@/components/icons";
 import { useI18n } from "@/lib/i18n";
-import { listOrders, listTrucks, getUser } from "@/lib/services";
-import { MOCK_USERS } from "@/lib/mock-data";
+import { listOrders, listTrucks } from "@/lib/services";
+import { MOCK_USERS, CITIES } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/")({
   head: () => ({
