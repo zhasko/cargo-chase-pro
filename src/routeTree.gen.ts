@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SubscriptionRouteImport } from './routes/subscription'
 import { Route as StatisticsRouteImport } from './routes/statistics'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PricingRouteImport } from './routes/pricing'
@@ -40,6 +41,11 @@ const SubscriptionRoute = SubscriptionRouteImport.update({
 const StatisticsRoute = StatisticsRouteImport.update({
   id: '/statistics',
   path: '/statistics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsRoute = SettingsRouteImport.update({
@@ -157,6 +163,7 @@ export interface FileRoutesByFullPath {
   '/pricing': typeof PricingRoute
   '/profile': typeof ProfileRoute
   '/settings': typeof SettingsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/statistics': typeof StatisticsRoute
   '/subscription': typeof SubscriptionRoute
   '/orders/$id': typeof OrdersIdRouteWithChildren
@@ -181,6 +188,7 @@ export interface FileRoutesByTo {
   '/pricing': typeof PricingRoute
   '/profile': typeof ProfileRoute
   '/settings': typeof SettingsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/statistics': typeof StatisticsRoute
   '/subscription': typeof SubscriptionRoute
   '/orders/$id': typeof OrdersIdRouteWithChildren
@@ -206,6 +214,7 @@ export interface FileRoutesById {
   '/pricing': typeof PricingRoute
   '/profile': typeof ProfileRoute
   '/settings': typeof SettingsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/statistics': typeof StatisticsRoute
   '/subscription': typeof SubscriptionRoute
   '/orders/$id': typeof OrdersIdRouteWithChildren
@@ -232,6 +241,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/profile'
     | '/settings'
+    | '/sitemap.xml'
     | '/statistics'
     | '/subscription'
     | '/orders/$id'
@@ -256,6 +266,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/profile'
     | '/settings'
+    | '/sitemap.xml'
     | '/statistics'
     | '/subscription'
     | '/orders/$id'
@@ -280,6 +291,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/profile'
     | '/settings'
+    | '/sitemap.xml'
     | '/statistics'
     | '/subscription'
     | '/orders/$id'
@@ -305,6 +317,7 @@ export interface RootRouteChildren {
   PricingRoute: typeof PricingRoute
   ProfileRoute: typeof ProfileRoute
   SettingsRoute: typeof SettingsRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   StatisticsRoute: typeof StatisticsRoute
   SubscriptionRoute: typeof SubscriptionRoute
   OrdersIdRoute: typeof OrdersIdRouteWithChildren
@@ -329,6 +342,13 @@ declare module '@tanstack/react-router' {
       path: '/statistics'
       fullPath: '/statistics'
       preLoaderRoute: typeof StatisticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings': {
@@ -500,6 +520,7 @@ const rootRouteChildren: RootRouteChildren = {
   PricingRoute: PricingRoute,
   ProfileRoute: ProfileRoute,
   SettingsRoute: SettingsRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   StatisticsRoute: StatisticsRoute,
   SubscriptionRoute: SubscriptionRoute,
   OrdersIdRoute: OrdersIdRouteWithChildren,
