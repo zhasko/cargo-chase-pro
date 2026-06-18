@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as MyCargoRouteImport } from './routes/my-cargo'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AuthRouteImport } from './routes/auth'
@@ -30,6 +31,11 @@ const ProfileRoute = ProfileRouteImport.update({
 const PricingRoute = PricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MyCargoRoute = MyCargoRouteImport.update({
+  id: '/my-cargo',
+  path: '/my-cargo',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FaqRoute = FaqRouteImport.update({
@@ -88,6 +94,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
+  '/my-cargo': typeof MyCargoRoute
   '/pricing': typeof PricingRoute
   '/profile': typeof ProfileRoute
   '/orders/$id': typeof OrdersIdRoute
@@ -102,6 +109,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
+  '/my-cargo': typeof MyCargoRoute
   '/pricing': typeof PricingRoute
   '/profile': typeof ProfileRoute
   '/orders/$id': typeof OrdersIdRoute
@@ -117,6 +125,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
+  '/my-cargo': typeof MyCargoRoute
   '/pricing': typeof PricingRoute
   '/profile': typeof ProfileRoute
   '/orders/$id': typeof OrdersIdRoute
@@ -133,6 +142,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/contact'
     | '/faq'
+    | '/my-cargo'
     | '/pricing'
     | '/profile'
     | '/orders/$id'
@@ -147,6 +157,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/contact'
     | '/faq'
+    | '/my-cargo'
     | '/pricing'
     | '/profile'
     | '/orders/$id'
@@ -161,6 +172,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/contact'
     | '/faq'
+    | '/my-cargo'
     | '/pricing'
     | '/profile'
     | '/orders/$id'
@@ -176,6 +188,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   ContactRoute: typeof ContactRoute
   FaqRoute: typeof FaqRoute
+  MyCargoRoute: typeof MyCargoRoute
   PricingRoute: typeof PricingRoute
   ProfileRoute: typeof ProfileRoute
   OrdersIdRoute: typeof OrdersIdRoute
@@ -200,6 +213,13 @@ declare module '@tanstack/react-router' {
       path: '/pricing'
       fullPath: '/pricing'
       preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/my-cargo': {
+      id: '/my-cargo'
+      path: '/my-cargo'
+      fullPath: '/my-cargo'
+      preLoaderRoute: typeof MyCargoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/faq': {
@@ -280,6 +300,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   ContactRoute: ContactRoute,
   FaqRoute: FaqRoute,
+  MyCargoRoute: MyCargoRoute,
   PricingRoute: PricingRoute,
   ProfileRoute: ProfileRoute,
   OrdersIdRoute: OrdersIdRoute,
