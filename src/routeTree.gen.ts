@@ -11,7 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as MyCargoRouteImport } from './routes/my-cargo'
+import { Route as FavoritesRouteImport } from './routes/favorites'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AuthRouteImport } from './routes/auth'
@@ -33,9 +35,19 @@ const PricingRoute = PricingRouteImport.update({
   path: '/pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MyCargoRoute = MyCargoRouteImport.update({
   id: '/my-cargo',
   path: '/my-cargo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FavoritesRoute = FavoritesRouteImport.update({
+  id: '/favorites',
+  path: '/favorites',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FaqRoute = FaqRouteImport.update({
@@ -94,7 +106,9 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
+  '/favorites': typeof FavoritesRoute
   '/my-cargo': typeof MyCargoRoute
+  '/notifications': typeof NotificationsRoute
   '/pricing': typeof PricingRoute
   '/profile': typeof ProfileRoute
   '/orders/$id': typeof OrdersIdRoute
@@ -109,7 +123,9 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
+  '/favorites': typeof FavoritesRoute
   '/my-cargo': typeof MyCargoRoute
+  '/notifications': typeof NotificationsRoute
   '/pricing': typeof PricingRoute
   '/profile': typeof ProfileRoute
   '/orders/$id': typeof OrdersIdRoute
@@ -125,7 +141,9 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
+  '/favorites': typeof FavoritesRoute
   '/my-cargo': typeof MyCargoRoute
+  '/notifications': typeof NotificationsRoute
   '/pricing': typeof PricingRoute
   '/profile': typeof ProfileRoute
   '/orders/$id': typeof OrdersIdRoute
@@ -142,7 +160,9 @@ export interface FileRouteTypes {
     | '/auth'
     | '/contact'
     | '/faq'
+    | '/favorites'
     | '/my-cargo'
+    | '/notifications'
     | '/pricing'
     | '/profile'
     | '/orders/$id'
@@ -157,7 +177,9 @@ export interface FileRouteTypes {
     | '/auth'
     | '/contact'
     | '/faq'
+    | '/favorites'
     | '/my-cargo'
+    | '/notifications'
     | '/pricing'
     | '/profile'
     | '/orders/$id'
@@ -172,7 +194,9 @@ export interface FileRouteTypes {
     | '/auth'
     | '/contact'
     | '/faq'
+    | '/favorites'
     | '/my-cargo'
+    | '/notifications'
     | '/pricing'
     | '/profile'
     | '/orders/$id'
@@ -188,7 +212,9 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   ContactRoute: typeof ContactRoute
   FaqRoute: typeof FaqRoute
+  FavoritesRoute: typeof FavoritesRoute
   MyCargoRoute: typeof MyCargoRoute
+  NotificationsRoute: typeof NotificationsRoute
   PricingRoute: typeof PricingRoute
   ProfileRoute: typeof ProfileRoute
   OrdersIdRoute: typeof OrdersIdRoute
@@ -215,11 +241,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PricingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/my-cargo': {
       id: '/my-cargo'
       path: '/my-cargo'
       fullPath: '/my-cargo'
       preLoaderRoute: typeof MyCargoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/favorites': {
+      id: '/favorites'
+      path: '/favorites'
+      fullPath: '/favorites'
+      preLoaderRoute: typeof FavoritesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/faq': {
@@ -300,7 +340,9 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   ContactRoute: ContactRoute,
   FaqRoute: FaqRoute,
+  FavoritesRoute: FavoritesRoute,
   MyCargoRoute: MyCargoRoute,
+  NotificationsRoute: NotificationsRoute,
   PricingRoute: PricingRoute,
   ProfileRoute: ProfileRoute,
   OrdersIdRoute: OrdersIdRoute,
