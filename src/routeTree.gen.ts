@@ -9,38 +9,432 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SubscriptionRouteImport } from './routes/subscription'
+import { Route as StatisticsRouteImport } from './routes/statistics'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as PaymentsRouteImport } from './routes/payments'
+import { Route as NotificationsRouteImport } from './routes/notifications'
+import { Route as MyCargoRouteImport } from './routes/my-cargo'
+import { Route as FavoritesRouteImport } from './routes/favorites'
+import { Route as FaqRouteImport } from './routes/faq'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as ComplaintsRouteImport } from './routes/complaints'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as TrucksIndexRouteImport } from './routes/trucks.index'
+import { Route as OrdersIndexRouteImport } from './routes/orders.index'
+import { Route as TrucksNewRouteImport } from './routes/trucks.new'
+import { Route as TrucksIdRouteImport } from './routes/trucks.$id'
+import { Route as OrdersNewRouteImport } from './routes/orders.new'
+import { Route as OrdersIdRouteImport } from './routes/orders.$id'
+import { Route as OrdersIdEditRouteImport } from './routes/orders.$id.edit'
 
+const SubscriptionRoute = SubscriptionRouteImport.update({
+  id: '/subscription',
+  path: '/subscription',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StatisticsRoute = StatisticsRouteImport.update({
+  id: '/statistics',
+  path: '/statistics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaymentsRoute = PaymentsRouteImport.update({
+  id: '/payments',
+  path: '/payments',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MyCargoRoute = MyCargoRouteImport.update({
+  id: '/my-cargo',
+  path: '/my-cargo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FavoritesRoute = FavoritesRouteImport.update({
+  id: '/favorites',
+  path: '/favorites',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ComplaintsRoute = ComplaintsRouteImport.update({
+  id: '/complaints',
+  path: '/complaints',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TrucksIndexRoute = TrucksIndexRouteImport.update({
+  id: '/trucks/',
+  path: '/trucks/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrdersIndexRoute = OrdersIndexRouteImport.update({
+  id: '/orders/',
+  path: '/orders/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TrucksNewRoute = TrucksNewRouteImport.update({
+  id: '/trucks/new',
+  path: '/trucks/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TrucksIdRoute = TrucksIdRouteImport.update({
+  id: '/trucks/$id',
+  path: '/trucks/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrdersNewRoute = OrdersNewRouteImport.update({
+  id: '/orders/new',
+  path: '/orders/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrdersIdRoute = OrdersIdRouteImport.update({
+  id: '/orders/$id',
+  path: '/orders/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrdersIdEditRoute = OrdersIdEditRouteImport.update({
+  id: '/edit',
+  path: '/edit',
+  getParentRoute: () => OrdersIdRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/auth': typeof AuthRoute
+  '/complaints': typeof ComplaintsRoute
+  '/contact': typeof ContactRoute
+  '/faq': typeof FaqRoute
+  '/favorites': typeof FavoritesRoute
+  '/my-cargo': typeof MyCargoRoute
+  '/notifications': typeof NotificationsRoute
+  '/payments': typeof PaymentsRoute
+  '/pricing': typeof PricingRoute
+  '/profile': typeof ProfileRoute
+  '/settings': typeof SettingsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/statistics': typeof StatisticsRoute
+  '/subscription': typeof SubscriptionRoute
+  '/orders/$id': typeof OrdersIdRouteWithChildren
+  '/orders/new': typeof OrdersNewRoute
+  '/trucks/$id': typeof TrucksIdRoute
+  '/trucks/new': typeof TrucksNewRoute
+  '/orders/': typeof OrdersIndexRoute
+  '/trucks/': typeof TrucksIndexRoute
+  '/orders/$id/edit': typeof OrdersIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/auth': typeof AuthRoute
+  '/complaints': typeof ComplaintsRoute
+  '/contact': typeof ContactRoute
+  '/faq': typeof FaqRoute
+  '/favorites': typeof FavoritesRoute
+  '/my-cargo': typeof MyCargoRoute
+  '/notifications': typeof NotificationsRoute
+  '/payments': typeof PaymentsRoute
+  '/pricing': typeof PricingRoute
+  '/profile': typeof ProfileRoute
+  '/settings': typeof SettingsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/statistics': typeof StatisticsRoute
+  '/subscription': typeof SubscriptionRoute
+  '/orders/$id': typeof OrdersIdRouteWithChildren
+  '/orders/new': typeof OrdersNewRoute
+  '/trucks/$id': typeof TrucksIdRoute
+  '/trucks/new': typeof TrucksNewRoute
+  '/orders': typeof OrdersIndexRoute
+  '/trucks': typeof TrucksIndexRoute
+  '/orders/$id/edit': typeof OrdersIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/auth': typeof AuthRoute
+  '/complaints': typeof ComplaintsRoute
+  '/contact': typeof ContactRoute
+  '/faq': typeof FaqRoute
+  '/favorites': typeof FavoritesRoute
+  '/my-cargo': typeof MyCargoRoute
+  '/notifications': typeof NotificationsRoute
+  '/payments': typeof PaymentsRoute
+  '/pricing': typeof PricingRoute
+  '/profile': typeof ProfileRoute
+  '/settings': typeof SettingsRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/statistics': typeof StatisticsRoute
+  '/subscription': typeof SubscriptionRoute
+  '/orders/$id': typeof OrdersIdRouteWithChildren
+  '/orders/new': typeof OrdersNewRoute
+  '/trucks/$id': typeof TrucksIdRoute
+  '/trucks/new': typeof TrucksNewRoute
+  '/orders/': typeof OrdersIndexRoute
+  '/trucks/': typeof TrucksIndexRoute
+  '/orders/$id/edit': typeof OrdersIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/auth'
+    | '/complaints'
+    | '/contact'
+    | '/faq'
+    | '/favorites'
+    | '/my-cargo'
+    | '/notifications'
+    | '/payments'
+    | '/pricing'
+    | '/profile'
+    | '/settings'
+    | '/sitemap.xml'
+    | '/statistics'
+    | '/subscription'
+    | '/orders/$id'
+    | '/orders/new'
+    | '/trucks/$id'
+    | '/trucks/new'
+    | '/orders/'
+    | '/trucks/'
+    | '/orders/$id/edit'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/admin'
+    | '/auth'
+    | '/complaints'
+    | '/contact'
+    | '/faq'
+    | '/favorites'
+    | '/my-cargo'
+    | '/notifications'
+    | '/payments'
+    | '/pricing'
+    | '/profile'
+    | '/settings'
+    | '/sitemap.xml'
+    | '/statistics'
+    | '/subscription'
+    | '/orders/$id'
+    | '/orders/new'
+    | '/trucks/$id'
+    | '/trucks/new'
+    | '/orders'
+    | '/trucks'
+    | '/orders/$id/edit'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/auth'
+    | '/complaints'
+    | '/contact'
+    | '/faq'
+    | '/favorites'
+    | '/my-cargo'
+    | '/notifications'
+    | '/payments'
+    | '/pricing'
+    | '/profile'
+    | '/settings'
+    | '/sitemap.xml'
+    | '/statistics'
+    | '/subscription'
+    | '/orders/$id'
+    | '/orders/new'
+    | '/trucks/$id'
+    | '/trucks/new'
+    | '/orders/'
+    | '/trucks/'
+    | '/orders/$id/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
+  AuthRoute: typeof AuthRoute
+  ComplaintsRoute: typeof ComplaintsRoute
+  ContactRoute: typeof ContactRoute
+  FaqRoute: typeof FaqRoute
+  FavoritesRoute: typeof FavoritesRoute
+  MyCargoRoute: typeof MyCargoRoute
+  NotificationsRoute: typeof NotificationsRoute
+  PaymentsRoute: typeof PaymentsRoute
+  PricingRoute: typeof PricingRoute
+  ProfileRoute: typeof ProfileRoute
+  SettingsRoute: typeof SettingsRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  StatisticsRoute: typeof StatisticsRoute
+  SubscriptionRoute: typeof SubscriptionRoute
+  OrdersIdRoute: typeof OrdersIdRouteWithChildren
+  OrdersNewRoute: typeof OrdersNewRoute
+  TrucksIdRoute: typeof TrucksIdRoute
+  TrucksNewRoute: typeof TrucksNewRoute
+  OrdersIndexRoute: typeof OrdersIndexRoute
+  TrucksIndexRoute: typeof TrucksIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/subscription': {
+      id: '/subscription'
+      path: '/subscription'
+      fullPath: '/subscription'
+      preLoaderRoute: typeof SubscriptionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/statistics': {
+      id: '/statistics'
+      path: '/statistics'
+      fullPath: '/statistics'
+      preLoaderRoute: typeof StatisticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payments': {
+      id: '/payments'
+      path: '/payments'
+      fullPath: '/payments'
+      preLoaderRoute: typeof PaymentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/my-cargo': {
+      id: '/my-cargo'
+      path: '/my-cargo'
+      fullPath: '/my-cargo'
+      preLoaderRoute: typeof MyCargoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/favorites': {
+      id: '/favorites'
+      path: '/favorites'
+      fullPath: '/favorites'
+      preLoaderRoute: typeof FavoritesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/complaints': {
+      id: '/complaints'
+      path: '/complaints'
+      fullPath: '/complaints'
+      preLoaderRoute: typeof ComplaintsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +442,94 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/trucks/': {
+      id: '/trucks/'
+      path: '/trucks'
+      fullPath: '/trucks/'
+      preLoaderRoute: typeof TrucksIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/orders/': {
+      id: '/orders/'
+      path: '/orders'
+      fullPath: '/orders/'
+      preLoaderRoute: typeof OrdersIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/trucks/new': {
+      id: '/trucks/new'
+      path: '/trucks/new'
+      fullPath: '/trucks/new'
+      preLoaderRoute: typeof TrucksNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/trucks/$id': {
+      id: '/trucks/$id'
+      path: '/trucks/$id'
+      fullPath: '/trucks/$id'
+      preLoaderRoute: typeof TrucksIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/orders/new': {
+      id: '/orders/new'
+      path: '/orders/new'
+      fullPath: '/orders/new'
+      preLoaderRoute: typeof OrdersNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/orders/$id': {
+      id: '/orders/$id'
+      path: '/orders/$id'
+      fullPath: '/orders/$id'
+      preLoaderRoute: typeof OrdersIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/orders/$id/edit': {
+      id: '/orders/$id/edit'
+      path: '/edit'
+      fullPath: '/orders/$id/edit'
+      preLoaderRoute: typeof OrdersIdEditRouteImport
+      parentRoute: typeof OrdersIdRoute
+    }
   }
 }
 
+interface OrdersIdRouteChildren {
+  OrdersIdEditRoute: typeof OrdersIdEditRoute
+}
+
+const OrdersIdRouteChildren: OrdersIdRouteChildren = {
+  OrdersIdEditRoute: OrdersIdEditRoute,
+}
+
+const OrdersIdRouteWithChildren = OrdersIdRoute._addFileChildren(
+  OrdersIdRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
+  AuthRoute: AuthRoute,
+  ComplaintsRoute: ComplaintsRoute,
+  ContactRoute: ContactRoute,
+  FaqRoute: FaqRoute,
+  FavoritesRoute: FavoritesRoute,
+  MyCargoRoute: MyCargoRoute,
+  NotificationsRoute: NotificationsRoute,
+  PaymentsRoute: PaymentsRoute,
+  PricingRoute: PricingRoute,
+  ProfileRoute: ProfileRoute,
+  SettingsRoute: SettingsRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
+  StatisticsRoute: StatisticsRoute,
+  SubscriptionRoute: SubscriptionRoute,
+  OrdersIdRoute: OrdersIdRouteWithChildren,
+  OrdersNewRoute: OrdersNewRoute,
+  TrucksIdRoute: TrucksIdRoute,
+  TrucksNewRoute: TrucksNewRoute,
+  OrdersIndexRoute: OrdersIndexRoute,
+  TrucksIndexRoute: TrucksIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
