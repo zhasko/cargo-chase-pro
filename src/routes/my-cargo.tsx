@@ -13,7 +13,7 @@ import type { OrderStatus } from "@/lib/types";
 
 export const Route = createFileRoute("/my-cargo")({
   head: () => ({ meta: [{ title: "Менің жүктерім — ARGO" }, { name: "robots", content: "noindex" }] }),
-  component: MyCargo;
+  component: MyCargo,
 });
 
 function MyCargo() {
