@@ -71,7 +71,9 @@ function Home() {
           </button>
         </div>
         <datalist id="qs-cities">
-          {[...new Set(MOCK_USERS.map(() => ""))].length === 0 && null}
+          {CITIES.map((c) => (
+            <option key={c} value={c} />
+          ))}
         </datalist>
       </div>
 
