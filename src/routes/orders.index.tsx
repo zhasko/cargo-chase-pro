@@ -10,7 +10,7 @@ import { useI18n } from "@/lib/i18n";
 import { listOrders } from "@/lib/services";
 import type { OrderFilters } from "@/lib/types";
 
-export const Route = createFileRoute("/orders")({
+export const Route = createFileRoute("/orders/")({
   head: () => ({
     meta: [
       { title: "Жүктер тізімі — ARGO" },
