@@ -9,8 +9,10 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SubscriptionRouteImport } from './routes/subscription'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as PaymentsRouteImport } from './routes/payments'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as MyCargoRouteImport } from './routes/my-cargo'
 import { Route as FavoritesRouteImport } from './routes/favorites'
@@ -25,6 +27,11 @@ import { Route as TrucksIdRouteImport } from './routes/trucks.$id'
 import { Route as OrdersNewRouteImport } from './routes/orders.new'
 import { Route as OrdersIdRouteImport } from './routes/orders.$id'
 
+const SubscriptionRoute = SubscriptionRouteImport.update({
+  id: '/subscription',
+  path: '/subscription',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -33,6 +40,11 @@ const ProfileRoute = ProfileRouteImport.update({
 const PricingRoute = PricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaymentsRoute = PaymentsRouteImport.update({
+  id: '/payments',
+  path: '/payments',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NotificationsRoute = NotificationsRouteImport.update({
@@ -109,8 +121,10 @@ export interface FileRoutesByFullPath {
   '/favorites': typeof FavoritesRoute
   '/my-cargo': typeof MyCargoRoute
   '/notifications': typeof NotificationsRoute
+  '/payments': typeof PaymentsRoute
   '/pricing': typeof PricingRoute
   '/profile': typeof ProfileRoute
+  '/subscription': typeof SubscriptionRoute
   '/orders/$id': typeof OrdersIdRoute
   '/orders/new': typeof OrdersNewRoute
   '/trucks/$id': typeof TrucksIdRoute
@@ -126,8 +140,10 @@ export interface FileRoutesByTo {
   '/favorites': typeof FavoritesRoute
   '/my-cargo': typeof MyCargoRoute
   '/notifications': typeof NotificationsRoute
+  '/payments': typeof PaymentsRoute
   '/pricing': typeof PricingRoute
   '/profile': typeof ProfileRoute
+  '/subscription': typeof SubscriptionRoute
   '/orders/$id': typeof OrdersIdRoute
   '/orders/new': typeof OrdersNewRoute
   '/trucks/$id': typeof TrucksIdRoute
@@ -144,8 +160,10 @@ export interface FileRoutesById {
   '/favorites': typeof FavoritesRoute
   '/my-cargo': typeof MyCargoRoute
   '/notifications': typeof NotificationsRoute
+  '/payments': typeof PaymentsRoute
   '/pricing': typeof PricingRoute
   '/profile': typeof ProfileRoute
+  '/subscription': typeof SubscriptionRoute
   '/orders/$id': typeof OrdersIdRoute
   '/orders/new': typeof OrdersNewRoute
   '/trucks/$id': typeof TrucksIdRoute
@@ -163,8 +181,10 @@ export interface FileRouteTypes {
     | '/favorites'
     | '/my-cargo'
     | '/notifications'
+    | '/payments'
     | '/pricing'
     | '/profile'
+    | '/subscription'
     | '/orders/$id'
     | '/orders/new'
     | '/trucks/$id'
@@ -180,8 +200,10 @@ export interface FileRouteTypes {
     | '/favorites'
     | '/my-cargo'
     | '/notifications'
+    | '/payments'
     | '/pricing'
     | '/profile'
+    | '/subscription'
     | '/orders/$id'
     | '/orders/new'
     | '/trucks/$id'
@@ -197,8 +219,10 @@ export interface FileRouteTypes {
     | '/favorites'
     | '/my-cargo'
     | '/notifications'
+    | '/payments'
     | '/pricing'
     | '/profile'
+    | '/subscription'
     | '/orders/$id'
     | '/orders/new'
     | '/trucks/$id'
@@ -215,8 +239,10 @@ export interface RootRouteChildren {
   FavoritesRoute: typeof FavoritesRoute
   MyCargoRoute: typeof MyCargoRoute
   NotificationsRoute: typeof NotificationsRoute
+  PaymentsRoute: typeof PaymentsRoute
   PricingRoute: typeof PricingRoute
   ProfileRoute: typeof ProfileRoute
+  SubscriptionRoute: typeof SubscriptionRoute
   OrdersIdRoute: typeof OrdersIdRoute
   OrdersNewRoute: typeof OrdersNewRoute
   TrucksIdRoute: typeof TrucksIdRoute
@@ -227,6 +253,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/subscription': {
+      id: '/subscription'
+      path: '/subscription'
+      fullPath: '/subscription'
+      preLoaderRoute: typeof SubscriptionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/profile': {
       id: '/profile'
       path: '/profile'
@@ -239,6 +272,13 @@ declare module '@tanstack/react-router' {
       path: '/pricing'
       fullPath: '/pricing'
       preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payments': {
+      id: '/payments'
+      path: '/payments'
+      fullPath: '/payments'
+      preLoaderRoute: typeof PaymentsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/notifications': {
@@ -343,8 +383,10 @@ const rootRouteChildren: RootRouteChildren = {
   FavoritesRoute: FavoritesRoute,
   MyCargoRoute: MyCargoRoute,
   NotificationsRoute: NotificationsRoute,
+  PaymentsRoute: PaymentsRoute,
   PricingRoute: PricingRoute,
   ProfileRoute: ProfileRoute,
+  SubscriptionRoute: SubscriptionRoute,
   OrdersIdRoute: OrdersIdRoute,
   OrdersNewRoute: OrdersNewRoute,
   TrucksIdRoute: TrucksIdRoute,
