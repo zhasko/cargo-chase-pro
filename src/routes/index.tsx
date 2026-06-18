@@ -31,7 +31,10 @@ function Home() {
   const trucks = useQuery({ queryKey: ["trucks", "latest"], queryFn: () => listTrucks() });
 
   const quickSearch = () => {
-    navigate({ to: "/orders", search: { from: from || undefined, to: to || undefined } as never });
+    if (typeof sessionStorage !== "undefined") {
+      sessionStorage.setItem("argo_qs", JSON.stringify({ from, to }));
+    }
+    navigate({ to: "/orders" });
   };
 
   return (
