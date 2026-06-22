@@ -1,12 +1,19 @@
 import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
 import { Icon } from "@/components/icons";
 import { ComplaintModal } from "@/components/ComplaintModal";
 import { shortDate } from "@/lib/format";
 import { useI18n } from "@/lib/i18n";
-import { getTruck, getUser, bumpTruckPhoneView, bumpTruckView } from "@/lib/services";
+import {
+  getTruck,
+  getUser,
+  bumpTruckPhoneView,
+  bumpTruckView,
+  isSubscriptionActiveAsync,
+} from "@/lib/services";
 import { useAuth } from "@/lib/store";
 
 export const Route = createFileRoute("/trucks/$id")({
@@ -21,27 +28,33 @@ function TruckDetail() {
 
   const [complaintOpen, setComplaintOpen] = useState(false);
   const [revealed, setRevealed] = useState(false);
-  const [viewBumped, setViewBumped] = useState(false);  
+  const [viewBumped, setViewBumped] = useState(false);
 
   const { data: truck, isLoading } = useQuery({
     queryKey: ["truck", id],
     queryFn: () => getTruck(id),
   });
 
-  useEffect(() => {
-  if (!truck || viewBumped) return;
-
-  if (user?.id !== truck.driver_id) {
-    bumpTruckView(truck.id);
-    setViewBumped(true);
-  }
-}, [truck, user?.id, viewBumped]);
-
   const { data: driver } = useQuery({
     queryKey: ["user", truck?.driver_id],
     queryFn: () => getUser(truck!.driver_id),
     enabled: !!truck,
   });
+
+  const { data: hasActiveSubscription = false } = useQuery({
+    queryKey: ["subscription-active", user?.id],
+    queryFn: () => isSubscriptionActiveAsync(user!.id),
+    enabled: !!user,
+  });
+
+  useEffect(() => {
+    if (!truck || viewBumped) return;
+
+    if (user?.id !== truck.driver_id) {
+      bumpTruckView(truck.id);
+      setViewBumped(true);
+    }
+  }, [truck, user?.id, viewBumped]);
 
   if (isLoading) {
     return (
@@ -62,19 +75,38 @@ function TruckDetail() {
   }
 
   const isOwner = user?.id === truck.driver_id;
-  const canSeePhone = !!user;
+  const isAdmin = user?.role === "admin";
+  const canSeePhone = isOwner || isAdmin || hasActiveSubscription;
 
   const revealPhone = async () => {
     if (!user) {
+      toast.error("Номерді көру үшін алдымен кіріңіз");
       navigate({ to: "/auth" });
       return;
     }
 
-    if (!isOwner && !revealed) {
+    if (!canSeePhone) {
+      toast.error("Номерді көру үшін жазылым қажет");
+      navigate({ to: "/subscription" as any });
+      return;
+    }
+
+    if (!isOwner && !isAdmin && !revealed) {
       await bumpTruckPhoneView(truck.id);
     }
 
     setRevealed(true);
+  };
+
+  const goToSubscribe = () => {
+    if (!user) {
+      toast.error("Алдымен аккаунтқа кіріңіз");
+      navigate({ to: "/auth" });
+      return;
+    }
+
+    toast.info("Номерді көру үшін жазылым сатып алыңыз");
+    navigate({ to: "/subscription" as any });
   };
 
   return (
@@ -87,7 +119,9 @@ function TruckDetail() {
         <div className="cargo-card-route" style={{ fontSize: 22 }}>
           <span>{truck.current_city}</span>
           <Icon.arrow style={{ width: 20, height: 20, flexShrink: 0 }} />
-          <span>{truck.destination_city === "any" ? t("truck.anyDirection") : truck.destination_city}</span>
+          <span>
+            {truck.destination_city === "any" ? t("truck.anyDirection") : truck.destination_city}
+          </span>
         </div>
 
         <div className="cargo-chips" style={{ marginTop: 12 }}>
@@ -131,18 +165,42 @@ function TruckDetail() {
           {t("truck.driver")}
         </div>
 
-        {!canSeePhone ? (
-          <button className="btn primary w-full" style={{ width: "100%" }} onClick={() => navigate({ to: "/auth" })}>
-            <Icon.lock style={{ width: 16, height: 16 }} /> {t("common.login")}
-          </button>
-        ) : revealed ? (
-          <a href={`tel:${truck.contact_phone || driver?.phone}`} className="btn accent w-full" style={{ width: "100%" }}>
-            <Icon.phone style={{ width: 16, height: 16 }} /> {truck.contact_phone || driver?.phone}
+        {canSeePhone && revealed ? (
+          <a
+            href={`tel:${truck.contact_phone || driver?.phone}`}
+            className="btn accent w-full"
+            style={{ width: "100%" }}
+          >
+            <Icon.phone style={{ width: 16, height: 16 }} />{" "}
+            {truck.contact_phone || driver?.phone}
           </a>
-        ) : (
+        ) : canSeePhone ? (
           <button className="btn primary w-full" style={{ width: "100%" }} onClick={revealPhone}>
             <Icon.phone style={{ width: 16, height: 16 }} /> {t("order.showPhone")}
           </button>
+        ) : (
+          <div className="locked-box">
+            <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+              <Icon.lock style={{ width: 18, height: 18 }} />
+
+              <div>
+                <div style={{ fontWeight: 800, fontSize: 14 }}>
+                  Номерді көру үшін жазылым қажет
+                </div>
+                <div className="text-muted" style={{ fontSize: 12, marginTop: 2 }}>
+                  Жазылым сатып алғаннан кейін жүргізушінің номері ашылады.
+                </div>
+              </div>
+            </div>
+
+            <button
+              className="btn primary w-full"
+              style={{ width: "100%", marginTop: 12 }}
+              onClick={goToSubscribe}
+            >
+              {user ? "Жазылым алу" : t("common.login")}
+            </button>
+          </div>
         )}
 
         {!isOwner && (
