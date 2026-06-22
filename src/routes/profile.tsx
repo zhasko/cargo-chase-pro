@@ -6,6 +6,8 @@ import { Icon, type IconName } from "@/components/icons";
 import { initials } from "@/lib/format";
 import { useI18n } from "@/lib/i18n";
 import { useAuth } from "@/lib/store";
+import { updateUserRole } from "@/lib/services";
+
 
 export const Route = createFileRoute("/profile")({
   head: () => ({ meta: [{ title: "Профиль — ARGO" }, { name: "robots", content: "noindex" }] }),
@@ -26,29 +28,34 @@ function Profile() {
 
   const items: { to: string; label: string; icon: IconName; variant?: string }[] = isDriver
     ? [
-        { to: "/trucks/new", label: t("truck.activeSearch"), icon: "zap", variant: "accent" },
+        { to: "/my-truck", label: t("profile.myTruck"), icon: "truck", variant: "accent" },
         { to: "/favorites", label: t("profile.favorites"), icon: "heart" },
         { to: "/subscription", label: t("profile.subscription"), icon: "star" },
         { to: "/payments", label: t("profile.payments"), icon: "credit" },
-        { to: "/statistics", label: t("profile.stats"), icon: "bar" },
-        { to: "/notifications", label: t("profile.notifications"), icon: "bell" },
         { to: "/complaints", label: t("profile.complaints"), icon: "flag" },
         { to: "/settings", label: t("profile.settings"), icon: "settings" },
       ]
     : [
         { to: "/my-cargo", label: t("profile.myCargo"), icon: "boxes", variant: "accent" },
         { to: "/orders/new", label: t("nav.addCargo"), icon: "plus" },
-        { to: "/statistics", label: t("profile.stats"), icon: "bar" },
-        { to: "/notifications", label: t("profile.notifications"), icon: "bell" },
         { to: "/complaints", label: t("profile.complaints"), icon: "flag" },
         { to: "/settings", label: t("profile.settings"), icon: "settings" },
       ];
 
-  const toggleRole = () => {
-    const next = isDriver ? "cargo_owner" : "driver";
-    switchRole(next);
-    toast.success(t("profile.switchRole"));
-  };
+const toggleRole = async () => {
+  if (!user) return;
+
+  const next = isDriver ? "cargo_owner" : "driver";
+
+  await updateUserRole(user.id, next);
+  switchRole(next);
+
+  toast.success(
+    next === "driver"
+      ? "Жүргізуші режиміне ауыстыңыз"
+      : "Жүк иесі режиміне ауыстыңыз"
+  );
+};
 
   return (
     <AppShell width="medium">

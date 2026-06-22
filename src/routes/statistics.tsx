@@ -7,8 +7,7 @@ import { listMyOrders } from "@/lib/services";
 import { useAuth } from "@/lib/store";
 
 export const Route = createFileRoute("/statistics")({
-  head: () => ({ meta: [{ title: "Статистика — ARGO" }, { name: "robots", content: "noindex" }] }),
-  component: Statistics,
+  component: () => null,
 });
 
 function Statistics() {

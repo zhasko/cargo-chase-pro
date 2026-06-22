@@ -17,6 +17,7 @@ import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PaymentsRouteImport } from './routes/payments'
 import { Route as NotificationsRouteImport } from './routes/notifications'
+import { Route as MyTruckRouteImport } from './routes/my-truck'
 import { Route as MyCargoRouteImport } from './routes/my-cargo'
 import { Route as FavoritesRouteImport } from './routes/favorites'
 import { Route as FaqRouteImport } from './routes/faq'
@@ -31,6 +32,7 @@ import { Route as TrucksNewRouteImport } from './routes/trucks.new'
 import { Route as TrucksIdRouteImport } from './routes/trucks.$id'
 import { Route as OrdersNewRouteImport } from './routes/orders.new'
 import { Route as OrdersIdRouteImport } from './routes/orders.$id'
+import { Route as TrucksIdEditRouteImport } from './routes/trucks.$id.edit'
 import { Route as OrdersIdEditRouteImport } from './routes/orders.$id.edit'
 
 const SubscriptionRoute = SubscriptionRouteImport.update({
@@ -71,6 +73,11 @@ const PaymentsRoute = PaymentsRouteImport.update({
 const NotificationsRoute = NotificationsRouteImport.update({
   id: '/notifications',
   path: '/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MyTruckRoute = MyTruckRouteImport.update({
+  id: '/my-truck',
+  path: '/my-truck',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MyCargoRoute = MyCargoRouteImport.update({
@@ -143,6 +150,11 @@ const OrdersIdRoute = OrdersIdRouteImport.update({
   path: '/orders/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TrucksIdEditRoute = TrucksIdEditRouteImport.update({
+  id: '/edit',
+  path: '/edit',
+  getParentRoute: () => TrucksIdRoute,
+} as any)
 const OrdersIdEditRoute = OrdersIdEditRouteImport.update({
   id: '/edit',
   path: '/edit',
@@ -158,6 +170,7 @@ export interface FileRoutesByFullPath {
   '/faq': typeof FaqRoute
   '/favorites': typeof FavoritesRoute
   '/my-cargo': typeof MyCargoRoute
+  '/my-truck': typeof MyTruckRoute
   '/notifications': typeof NotificationsRoute
   '/payments': typeof PaymentsRoute
   '/pricing': typeof PricingRoute
@@ -168,11 +181,12 @@ export interface FileRoutesByFullPath {
   '/subscription': typeof SubscriptionRoute
   '/orders/$id': typeof OrdersIdRouteWithChildren
   '/orders/new': typeof OrdersNewRoute
-  '/trucks/$id': typeof TrucksIdRoute
+  '/trucks/$id': typeof TrucksIdRouteWithChildren
   '/trucks/new': typeof TrucksNewRoute
   '/orders/': typeof OrdersIndexRoute
   '/trucks/': typeof TrucksIndexRoute
   '/orders/$id/edit': typeof OrdersIdEditRoute
+  '/trucks/$id/edit': typeof TrucksIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -183,6 +197,7 @@ export interface FileRoutesByTo {
   '/faq': typeof FaqRoute
   '/favorites': typeof FavoritesRoute
   '/my-cargo': typeof MyCargoRoute
+  '/my-truck': typeof MyTruckRoute
   '/notifications': typeof NotificationsRoute
   '/payments': typeof PaymentsRoute
   '/pricing': typeof PricingRoute
@@ -193,11 +208,12 @@ export interface FileRoutesByTo {
   '/subscription': typeof SubscriptionRoute
   '/orders/$id': typeof OrdersIdRouteWithChildren
   '/orders/new': typeof OrdersNewRoute
-  '/trucks/$id': typeof TrucksIdRoute
+  '/trucks/$id': typeof TrucksIdRouteWithChildren
   '/trucks/new': typeof TrucksNewRoute
   '/orders': typeof OrdersIndexRoute
   '/trucks': typeof TrucksIndexRoute
   '/orders/$id/edit': typeof OrdersIdEditRoute
+  '/trucks/$id/edit': typeof TrucksIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -209,6 +225,7 @@ export interface FileRoutesById {
   '/faq': typeof FaqRoute
   '/favorites': typeof FavoritesRoute
   '/my-cargo': typeof MyCargoRoute
+  '/my-truck': typeof MyTruckRoute
   '/notifications': typeof NotificationsRoute
   '/payments': typeof PaymentsRoute
   '/pricing': typeof PricingRoute
@@ -219,11 +236,12 @@ export interface FileRoutesById {
   '/subscription': typeof SubscriptionRoute
   '/orders/$id': typeof OrdersIdRouteWithChildren
   '/orders/new': typeof OrdersNewRoute
-  '/trucks/$id': typeof TrucksIdRoute
+  '/trucks/$id': typeof TrucksIdRouteWithChildren
   '/trucks/new': typeof TrucksNewRoute
   '/orders/': typeof OrdersIndexRoute
   '/trucks/': typeof TrucksIndexRoute
   '/orders/$id/edit': typeof OrdersIdEditRoute
+  '/trucks/$id/edit': typeof TrucksIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -236,6 +254,7 @@ export interface FileRouteTypes {
     | '/faq'
     | '/favorites'
     | '/my-cargo'
+    | '/my-truck'
     | '/notifications'
     | '/payments'
     | '/pricing'
@@ -251,6 +270,7 @@ export interface FileRouteTypes {
     | '/orders/'
     | '/trucks/'
     | '/orders/$id/edit'
+    | '/trucks/$id/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -261,6 +281,7 @@ export interface FileRouteTypes {
     | '/faq'
     | '/favorites'
     | '/my-cargo'
+    | '/my-truck'
     | '/notifications'
     | '/payments'
     | '/pricing'
@@ -276,6 +297,7 @@ export interface FileRouteTypes {
     | '/orders'
     | '/trucks'
     | '/orders/$id/edit'
+    | '/trucks/$id/edit'
   id:
     | '__root__'
     | '/'
@@ -286,6 +308,7 @@ export interface FileRouteTypes {
     | '/faq'
     | '/favorites'
     | '/my-cargo'
+    | '/my-truck'
     | '/notifications'
     | '/payments'
     | '/pricing'
@@ -301,6 +324,7 @@ export interface FileRouteTypes {
     | '/orders/'
     | '/trucks/'
     | '/orders/$id/edit'
+    | '/trucks/$id/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -312,6 +336,7 @@ export interface RootRouteChildren {
   FaqRoute: typeof FaqRoute
   FavoritesRoute: typeof FavoritesRoute
   MyCargoRoute: typeof MyCargoRoute
+  MyTruckRoute: typeof MyTruckRoute
   NotificationsRoute: typeof NotificationsRoute
   PaymentsRoute: typeof PaymentsRoute
   PricingRoute: typeof PricingRoute
@@ -322,7 +347,7 @@ export interface RootRouteChildren {
   SubscriptionRoute: typeof SubscriptionRoute
   OrdersIdRoute: typeof OrdersIdRouteWithChildren
   OrdersNewRoute: typeof OrdersNewRoute
-  TrucksIdRoute: typeof TrucksIdRoute
+  TrucksIdRoute: typeof TrucksIdRouteWithChildren
   TrucksNewRoute: typeof TrucksNewRoute
   OrdersIndexRoute: typeof OrdersIndexRoute
   TrucksIndexRoute: typeof TrucksIndexRoute
@@ -384,6 +409,13 @@ declare module '@tanstack/react-router' {
       path: '/notifications'
       fullPath: '/notifications'
       preLoaderRoute: typeof NotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/my-truck': {
+      id: '/my-truck'
+      path: '/my-truck'
+      fullPath: '/my-truck'
+      preLoaderRoute: typeof MyTruckRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/my-cargo': {
@@ -484,6 +516,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrdersIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/trucks/$id/edit': {
+      id: '/trucks/$id/edit'
+      path: '/edit'
+      fullPath: '/trucks/$id/edit'
+      preLoaderRoute: typeof TrucksIdEditRouteImport
+      parentRoute: typeof TrucksIdRoute
+    }
     '/orders/$id/edit': {
       id: '/orders/$id/edit'
       path: '/edit'
@@ -506,6 +545,18 @@ const OrdersIdRouteWithChildren = OrdersIdRoute._addFileChildren(
   OrdersIdRouteChildren,
 )
 
+interface TrucksIdRouteChildren {
+  TrucksIdEditRoute: typeof TrucksIdEditRoute
+}
+
+const TrucksIdRouteChildren: TrucksIdRouteChildren = {
+  TrucksIdEditRoute: TrucksIdEditRoute,
+}
+
+const TrucksIdRouteWithChildren = TrucksIdRoute._addFileChildren(
+  TrucksIdRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
@@ -515,6 +566,7 @@ const rootRouteChildren: RootRouteChildren = {
   FaqRoute: FaqRoute,
   FavoritesRoute: FavoritesRoute,
   MyCargoRoute: MyCargoRoute,
+  MyTruckRoute: MyTruckRoute,
   NotificationsRoute: NotificationsRoute,
   PaymentsRoute: PaymentsRoute,
   PricingRoute: PricingRoute,
@@ -525,7 +577,7 @@ const rootRouteChildren: RootRouteChildren = {
   SubscriptionRoute: SubscriptionRoute,
   OrdersIdRoute: OrdersIdRouteWithChildren,
   OrdersNewRoute: OrdersNewRoute,
-  TrucksIdRoute: TrucksIdRoute,
+  TrucksIdRoute: TrucksIdRouteWithChildren,
   TrucksNewRoute: TrucksNewRoute,
   OrdersIndexRoute: OrdersIndexRoute,
   TrucksIndexRoute: TrucksIndexRoute,
@@ -533,3 +585,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

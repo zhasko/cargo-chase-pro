@@ -5,17 +5,23 @@ import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
 import { EmptyState } from "@/components/EmptyState";
 import { Icon } from "@/components/icons";
-import { kzt, maskPhones, shortDate } from "@/lib/format";
+import { shortDate } from "@/lib/format";
 import { useI18n } from "@/lib/i18n";
-import { listMyOrders, setOrderStatus } from "@/lib/services";
+import { listMyTrucks, setTruckStatus } from "@/lib/services";
 import { useAuth } from "@/lib/store";
-import type { Order } from "@/lib/types";
+import type { Truck } from "@/lib/types";
 
-export const Route = createFileRoute("/my-cargo")({
-  component: MyCargo,
+export const Route = createFileRoute("/my-truck")({
+  head: () => ({
+    meta: [
+      { title: "Менің көліктерім — ARGO" },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
+  component: MyTruck,
 });
 
-function MyCargo() {
+function MyTruck() {
   const { t } = useI18n();
   const navigate = useNavigate();
   const qc = useQueryClient();
@@ -28,25 +34,27 @@ function MyCargo() {
   }, [ready, user, navigate]);
 
   const { data = [], isLoading } = useQuery({
-    queryKey: ["my-orders", user?.id],
-    queryFn: () => listMyOrders(user!.id),
+    queryKey: ["my-trucks", user?.id],
+    queryFn: () => listMyTrucks(user!.id),
     enabled: !!user,
   });
 
-  const active = data.filter((order) => order.status === "active");
-  const archived = data.filter((order) => order.status === "archived");
+  const active = data.filter((truck) => truck.status === "active");
+  const archived = data.filter(
+    (truck) => truck.status === "archived" || truck.status === "inactive"
+  );
 
   const changeStatus = async (
     id: string,
-    status: "active" | "accepted" | "archived" | "deleted",
+    status: "active" | "inactive" | "archived" | "deleted",
     message: string
   ) => {
     try {
-      await setOrderStatus(id, status);
+      await setTruckStatus(id, status);
 
-      await qc.invalidateQueries({ queryKey: ["my-orders"] });
-      await qc.invalidateQueries({ queryKey: ["orders"] });
-      await qc.invalidateQueries({ queryKey: ["order", id] });
+      await qc.invalidateQueries({ queryKey: ["my-trucks"] });
+      await qc.invalidateQueries({ queryKey: ["trucks"] });
+      await qc.invalidateQueries({ queryKey: ["truck", id] });
 
       toast.success(message);
     } catch (e: any) {
@@ -64,13 +72,13 @@ function MyCargo() {
 
       <div className="sec-header">
         <div>
-          <h1 className="page-title">Менің жүктерім</h1>
+          <h1 className="page-title">Менің көліктерім</h1>
           <p className="page-sub">{data.length} жарияланым</p>
         </div>
 
-        <button className="btn primary" onClick={() => navigate({ to: "/orders/new" })}>
+        <button className="btn primary" onClick={() => navigate({ to: "/trucks/new" })}>
           <Icon.plus style={{ width: 16, height: 16 }} />
-          Жүк қосу
+          Көлік қосу
         </button>
       </div>
 
@@ -80,9 +88,9 @@ function MyCargo() {
         </div>
       ) : data.length === 0 ? (
         <EmptyState
-          title="Жүк жоқ"
-          description="Бірінші жүгіңізді жариялаңыз"
-          icon="package"
+          title="Көлік жоқ"
+          description="Бос көлігіңізді қосып, жүк иелеріне ұсыныс қалдырыңыз"
+          icon="truck"
         />
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
@@ -93,21 +101,21 @@ function MyCargo() {
 
             {active.length === 0 ? (
               <div className="card text-muted" style={{ fontSize: 13 }}>
-                Белсенді жүк жоқ
+                Белсенді көлік жоқ
               </div>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                {active.map((order) => (
-                  <OrderRow
-                    key={order.id}
-                    order={order}
+                {active.map((truck) => (
+                  <TruckRow
+                    key={truck.id}
+                    truck={truck}
                     archived={false}
-                    onView={() => navigate({ to: "/orders/$id", params: { id: order.id } })}
-                    onEdit={() => navigate({ to: "/orders/$id/edit", params: { id: order.id } })}
-                    onArchive={() => changeStatus(order.id, "archived", "Архивке жіберілді")}
+                    onView={() => navigate({ to: "/trucks/$id", params: { id: truck.id } })}
+                    onEdit={() => navigate({ to: "/trucks/$id/edit", params: { id: truck.id } })}
+                    onArchive={() => changeStatus(truck.id, "archived", "Архивке жіберілді")}
                     onDelete={() => {
-                      if (confirm("Жүкті жоюды растайсыз ба?")) {
-                        changeStatus(order.id, "deleted", "Жүк жойылды");
+                      if (confirm("Көлікті жоюды растайсыз ба?")) {
+                        changeStatus(truck.id, "deleted", "Көлік жойылды");
                       }
                     }}
                   />
@@ -123,21 +131,21 @@ function MyCargo() {
 
             {archived.length === 0 ? (
               <div className="card text-muted" style={{ fontSize: 13 }}>
-                Архивте жүк жоқ
+                Архивте көлік жоқ
               </div>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                {archived.map((order) => (
-                  <OrderRow
-                    key={order.id}
-                    order={order}
+                {archived.map((truck) => (
+                  <TruckRow
+                    key={truck.id}
+                    truck={truck}
                     archived
-                    onView={() => navigate({ to: "/orders/$id", params: { id: order.id } })}
-                    onEdit={() => navigate({ to: "/orders/$id/edit", params: { id: order.id } })}
-                    onRestore={() => changeStatus(order.id, "active", "Қайта қосылды")}
+                    onView={() => navigate({ to: "/trucks/$id", params: { id: truck.id } })}
+                    onEdit={() => navigate({ to: "/trucks/$id/edit", params: { id: truck.id } })}
+                    onRestore={() => changeStatus(truck.id, "active", "Қайта қосылды")}
                     onDelete={() => {
-                      if (confirm("Жүкті жоюды растайсыз ба?")) {
-                        changeStatus(order.id, "deleted", "Жүк жойылды");
+                      if (confirm("Көлікті жоюды растайсыз ба?")) {
+                        changeStatus(truck.id, "deleted", "Көлік жойылды");
                       }
                     }}
                   />
@@ -151,8 +159,8 @@ function MyCargo() {
   );
 }
 
-function OrderRow({
-  order,
+function TruckRow({
+  truck,
   archived,
   onView,
   onEdit,
@@ -160,7 +168,7 @@ function OrderRow({
   onRestore,
   onDelete,
 }: {
-  order: Order;
+  truck: Truck;
   archived?: boolean;
   onView: () => void;
   onEdit: () => void;
@@ -170,45 +178,41 @@ function OrderRow({
 }) {
   return (
     <div className="card">
-      <div className="cargo-card-route" style={{ fontSize: 16 }}>
-        <span>{order.from_city}</span>
-        <Icon.arrow style={{ width: 14, height: 14 }} />
-        <span>{order.to_city}</span>
-      </div>
+      <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
+        <div style={{ flex: 1 }}>
+          <div className="cargo-card-route" style={{ fontSize: 16 }}>
+            <span>{truck.current_city}</span>
+            <Icon.arrow style={{ width: 14, height: 14 }} />
+            <span>
+              {truck.destination_city === "any" ? "Кез келген бағыт" : truck.destination_city}
+            </span>
+          </div>
 
-      <div className="cargo-card-name">{order.cargo_name}</div>
+          <div className="cargo-card-name">
+            {truck.vehicle_type} · {truck.load_capacity} т · {truck.volume} м³ ·{" "}
+            {shortDate(truck.ready_date)}
+          </div>
 
-      <div className="cargo-chips">
-        <span className="chip accent">{order.vehicle_type}</span>
-        <span className="chip">{order.weight} т</span>
-        <span className="chip">{order.volume} м³</span>
-        <span className="chip">{shortDate(order.loading_date)}</span>
-        <span className={order.status === "active" ? "chip success" : "chip warning"}>
-          {order.status === "active" ? "Белсенді" : "Архив"}
-        </span>
-      </div>
+          {truck.comment && (
+            <p className="text-muted" style={{ fontSize: 13, marginTop: 8 }}>
+              {truck.comment}
+            </p>
+          )}
 
-      <div className="order-price-box">
-        <label>Баға</label>
-        <div className="order-price-val">
-          {order.negotiable ? "Келісімді" : kzt(order.price || 0)}
+          <div className="cargo-chips">
+            <span className={`chip ${truck.status === "active" ? "success" : "warning"}`}>
+              {truck.status === "active" ? "Белсенді" : "Архив"}
+            </span>
+
+            <span className="chip">
+              <Icon.eye style={{ width: 11, height: 11 }} /> {truck.views || 0}
+            </span>
+
+            <span className="chip">
+              <Icon.phone style={{ width: 11, height: 11 }} /> {truck.phone_views || 0}
+            </span>
+          </div>
         </div>
-      </div>
-
-      {order.comment && (
-        <p className="text-muted" style={{ fontSize: 13, marginTop: 8 }}>
-          {maskPhones(order.comment || "")}
-        </p>
-      )}
-
-      <div className="cargo-chips">
-        <span className="chip">
-          <Icon.eye style={{ width: 11, height: 11 }} /> {order.views || 0}
-        </span>
-
-        <span className="chip">
-          <Icon.phone style={{ width: 11, height: 11 }} /> {order.phone_views || 0}
-        </span>
       </div>
 
       <div className="cargo-actions">

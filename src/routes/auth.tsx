@@ -1,18 +1,36 @@
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useRef, useState } from "react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Icon } from "@/components/icons";
 import { useI18n } from "@/lib/i18n";
 import { useAuth } from "@/lib/store";
-import { CITIES, VEHICLE_TYPES } from "@/lib/mock-data";
+import { supabase } from "@/lib/supabase";
 import type { Lang, Role } from "@/lib/types";
 
+const AUTH_DRAFT_KEY = "argo_auth_draft_v1";
+const WHATSAPP_BOT_NUMBER = "77011250468";
+
 export const Route = createFileRoute("/auth")({
-  head: () => ({ meta: [{ title: "Кіру — ARGO" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({
+    meta: [
+      { title: "Кіру — ARGO" },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   component: AuthPage,
 });
 
-type Step = "phone" | "otp" | "role" | "register" | "done";
+type Step = "phone" | "otp" | "register" | "role" | "done";
+
+function normalizePhone(value: string) {
+  const digits = value.replace(/\D/g, "");
+
+  if (digits.startsWith("8") && digits.length === 11) return "+7" + digits.slice(1);
+  if (digits.startsWith("7") && digits.length === 11) return "+" + digits;
+  if (digits.length === 10) return "+7" + digits;
+
+  return value.startsWith("+") ? value : "+" + digits;
+}
 
 function AuthPage() {
   const { t, lang, setLang } = useI18n();
@@ -23,43 +41,184 @@ function AuthPage() {
   const [phone, setPhone] = useState("+7 ");
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [role, setRole] = useState<Role>("cargo_owner");
-  const [form, setForm] = useState({ full_name: "", company_name: "", vehicle_type: VEHICLE_TYPES[0], load_capacity: "", volume: "", current_city: CITIES[0] });
+  const [busy, setBusy] = useState(false);
+
+  const [form, setForm] = useState({
+    full_name: "",
+    company_name: "",
+  });
+
   const [errors, setErrors] = useState<Record<string, string>>({});
   const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-  const sendCode = () => {
-    if (phone.replace(/\D/g, "").length < 11) {
-      setErrors({ phone: t("common.required") });
-      return;
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(AUTH_DRAFT_KEY);
+      if (!saved) return;
+
+      const parsed = JSON.parse(saved);
+
+      if (parsed.phone) setPhone(parsed.phone);
+      if (parsed.step) setStep(parsed.step);
+      if (parsed.role) setRole(parsed.role);
+      if (parsed.form) setForm(parsed.form);
+    } catch {
+      localStorage.removeItem(AUTH_DRAFT_KEY);
     }
-    setErrors({});
-    setStep("otp");
-    toast.info(t("auth.demoHint"));
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem(
+      AUTH_DRAFT_KEY,
+      JSON.stringify({
+        phone,
+        step,
+        role,
+        form,
+      })
+    );
+  }, [phone, step, role, form]);
+
+  const clearDraft = () => {
+    localStorage.removeItem(AUTH_DRAFT_KEY);
   };
 
-  const verify = () => {
-    if (otp.join("").length < 6) {
-      toast.error(t("common.required"));
+  const openWhatsappBot = (normalizedPhone: string) => {
+    const returnUrl = `${window.location.origin}/auth`;
+
+    const text = encodeURIComponent(
+      `код`
+    );
+
+    window.open(`https://wa.me/${WHATSAPP_BOT_NUMBER}?text=${text}`, "_blank");
+  };
+
+  const sendCode = async () => {
+    const normalizedPhone = normalizePhone(phone);
+
+    if (!normalizedPhone.startsWith("+7") || normalizedPhone.length !== 12) {
+      toast.error("Нөмірді +7 форматында енгізіңіз");
       return;
     }
-    const existing = findByPhone(phone);
-    if (existing) {
-      loginExisting(existing);
-      toast.success(t("common.success"));
-      navigate({ to: existing.role === "admin" ? "/admin" : "/" });
-    } else {
-      setStep("role");
+
+    setBusy(true);
+
+    try {
+      const { error } = await supabase.rpc("create_whatsapp_otp", {
+        p_phone: normalizedPhone,
+      });
+
+      if (error) throw error;
+
+      setPhone(normalizedPhone);
+      setOtp(["", "", "", "", "", ""]);
+      setStep("otp");
+
+      localStorage.setItem(
+        AUTH_DRAFT_KEY,
+        JSON.stringify({
+          phone: normalizedPhone,
+          step: "otp",
+          role,
+          form,
+        })
+      );
+
+      openWhatsappBot(normalizedPhone);
+
+      toast.success("WhatsApp ашылды. Дайын хабарламаны жіберіңіз");
+    } catch (e: any) {
+      console.error("create whatsapp otp error:", e);
+      toast.error(e?.message || "Код жасау кезінде қате шықты");
+    } finally {
+      setBusy(false);
     }
   };
 
-  const finishRegister = () => {
+  const verify = async () => {
+    const token = otp.join("");
+    const normalizedPhone = normalizePhone(phone);
+
+    if (token.length !== 6) {
+      toast.error("6 таңбалы кодты енгізіңіз");
+      return;
+    }
+
+    setBusy(true);
+
+    try {
+      const { data, error } = await supabase.rpc("verify_whatsapp_otp", {
+        p_phone: normalizedPhone,
+        p_code: token,
+      });
+
+      if (error) throw error;
+
+      if (!data) {
+        toast.error("Код қате немесе мерзімі өтіп кеткен");
+        return;
+      }
+
+      const existing = await findByPhone(normalizedPhone);
+
+      if (existing) {
+        loginExisting(existing);
+        clearDraft();
+        toast.success("Кіру сәтті өтті");
+        navigate({ to: existing.role === "admin" ? "/admin" : "/" });
+        return;
+      }
+
+      setPhone(normalizedPhone);
+      setStep("register");
+    } catch (e: any) {
+      console.error("verify whatsapp otp error:", e);
+      toast.error(e?.message || "Код тексеру кезінде қате шықты");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const goToRole = () => {
     const e: Record<string, string> = {};
-    if (!form.full_name.trim()) e.full_name = t("common.required");
+
+    if (!form.full_name.trim()) {
+      e.full_name = t("common.required");
+    }
+
     setErrors(e);
+
     if (Object.keys(e).length) return;
-    register({ phone, full_name: form.full_name, role, company_name: form.company_name || undefined });
-    setStep("done");
-    setTimeout(() => navigate({ to: "/" }), 1400);
+
+    setStep("role");
+  };
+
+  const finishRegister = async (selectedRole: Role) => {
+    setBusy(true);
+
+    try {
+      setRole(selectedRole);
+
+      await register({
+        phone: normalizePhone(phone),
+        full_name: form.full_name.trim(),
+        company_name: form.company_name.trim() || undefined,
+        role: selectedRole,
+      });
+
+      clearDraft();
+      setStep("done");
+      toast.success("Аккаунт құрылды");
+
+      setTimeout(() => {
+        navigate({ to: "/" });
+      }, 800);
+    } catch (e: any) {
+      console.error("register error:", e);
+      toast.error(e?.message || "Тіркелу кезінде қате шықты");
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
@@ -67,6 +226,7 @@ function AuthPage() {
       <div className="auth-card">
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
           <Link to="/" className="auth-logo">A</Link>
+
           <select className="lang-select" value={lang} onChange={(e) => setLang(e.target.value as Lang)}>
             <option value="kk">ҚАЗ</option>
             <option value="ru">РУС</option>
@@ -77,26 +237,58 @@ function AuthPage() {
         {step === "phone" && (
           <>
             <h1 style={{ fontSize: 22, fontWeight: 900 }}>{t("auth.welcome")}</h1>
-            <p className="text-muted" style={{ fontSize: 13, marginTop: 4 }}>{t("auth.phoneSub")}</p>
+
+            <p className="text-muted" style={{ fontSize: 13, marginTop: 4 }}>
+              Нөміріңізді енгізіңіз. Кодты WhatsApp бот арқылы аласыз.
+            </p>
+
             <div style={{ marginTop: 20 }}>
               <label className="step-label active">{t("auth.phoneTitle")}</label>
-              <input className="input" style={{ marginTop: 6 }} value={phone} onChange={(e) => setPhone(e.target.value)} placeholder={t("auth.phonePlaceholder")} inputMode="tel" />
-              {errors.phone && <div className="text-danger" style={{ fontSize: 12, marginTop: 6 }}>{errors.phone}</div>}
+
+              <input
+                className="input"
+                style={{ marginTop: 6 }}
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder={t("auth.phonePlaceholder")}
+                inputMode="tel"
+              />
             </div>
-            <button className="btn primary w-full" style={{ width: "100%", marginTop: 20 }} onClick={sendCode}>{t("auth.sendCode")}</button>
-            <p className="text-muted" style={{ fontSize: 11, marginTop: 16, textAlign: "center" }}>{t("auth.terms")}</p>
+
+            <button className="btn primary" style={{ width: "100%", marginTop: 20 }} disabled={busy} onClick={sendCode}>
+              {busy ? t("common.loading") : "Кодты WhatsApp арқылы алу"}
+            </button>
+
+            <p className="text-muted" style={{ fontSize: 11, marginTop: 16, textAlign: "center" }}>
+              Батырманы басқаннан кейін WhatsApp ашылады. Дайын тұрған “код” хабарламасын жіберіңіз.
+            </p>
           </>
         )}
 
         {step === "otp" && (
           <>
             <h1 style={{ fontSize: 22, fontWeight: 900 }}>{t("auth.codeTitle")}</h1>
-            <p className="text-muted" style={{ fontSize: 13, marginTop: 4 }}>{t("auth.codeSub")} {phone}</p>
+
+            <p className="text-muted" style={{ fontSize: 13, marginTop: 4 }}>
+              Код күтілуде: {phone}
+            </p>
+
+            <button
+              className="btn accent"
+              style={{ width: "100%", marginTop: 14 }}
+              disabled={busy}
+              onClick={() => openWhatsappBot(normalizePhone(phone))}
+            >
+              WhatsApp-қа қайта өту
+            </button>
+
             <div className="otp-grid">
               {otp.map((d, i) => (
                 <input
                   key={i}
-                  ref={(el) => { otpRefs.current[i] = el; }}
+                  ref={(el) => {
+                    otpRefs.current[i] = el;
+                  }}
                   className="otp-input"
                   value={d}
                   inputMode="numeric"
@@ -104,42 +296,32 @@ function AuthPage() {
                   onChange={(e) => {
                     const v = e.target.value.replace(/\D/g, "");
                     const next = [...otp];
+
                     next[i] = v;
                     setOtp(next);
+
                     if (v && i < 5) otpRefs.current[i + 1]?.focus();
                   }}
                   onKeyDown={(e) => {
-                    if (e.key === "Backspace" && !otp[i] && i > 0) otpRefs.current[i - 1]?.focus();
+                    if (e.key === "Backspace" && !otp[i] && i > 0) {
+                      otpRefs.current[i - 1]?.focus();
+                    }
                   }}
                 />
               ))}
             </div>
-            <button className="btn primary w-full" style={{ width: "100%", marginTop: 20 }} onClick={verify}>{t("auth.verify")}</button>
-            <div style={{ display: "flex", justifyContent: "space-between", marginTop: 14 }}>
-              <button className="back-btn" style={{ margin: 0 }} onClick={() => setStep("phone")}>{t("auth.changePhone")}</button>
-              <button className="back-btn" style={{ margin: 0 }} onClick={() => toast.info(t("auth.demoHint"))}>{t("auth.resend")}</button>
-            </div>
-          </>
-        )}
 
-        {step === "role" && (
-          <>
-            <h1 style={{ fontSize: 22, fontWeight: 900 }}>{t("auth.roleTitle")}</h1>
-            <p className="text-muted" style={{ fontSize: 13, marginTop: 4 }}>{t("auth.roleSub")}</p>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 20 }}>
-              <button className="role-card" onClick={() => { setRole("cargo_owner"); setStep("register"); }}>
-                <div className="role-icon accent"><Icon.package /></div>
-                <div>
-                  <div style={{ fontWeight: 800 }}>{t("auth.roleOwner")}</div>
-                  <div className="text-muted" style={{ fontSize: 12 }}>{t("auth.roleOwnerDesc")}</div>
-                </div>
+            <button className="btn primary" style={{ width: "100%", marginTop: 20 }} disabled={busy} onClick={verify}>
+              {busy ? t("common.loading") : t("auth.verify")}
+            </button>
+
+            <div style={{ display: "flex", justifyContent: "space-between", marginTop: 14 }}>
+              <button className="back-btn" style={{ margin: 0 }} disabled={busy} onClick={() => setStep("phone")}>
+                {t("auth.changePhone")}
               </button>
-              <button className="role-card" onClick={() => { setRole("driver"); setStep("register"); }}>
-                <div className="role-icon dark"><Icon.truck /></div>
-                <div>
-                  <div style={{ fontWeight: 800 }}>{t("auth.roleDriver")}</div>
-                  <div className="text-muted" style={{ fontSize: 12 }}>{t("auth.roleDriverDesc")}</div>
-                </div>
+
+              <button className="back-btn" style={{ margin: 0 }} disabled={busy} onClick={sendCode}>
+                {t("auth.resend")}
               </button>
             </div>
           </>
@@ -147,37 +329,97 @@ function AuthPage() {
 
         {step === "register" && (
           <>
-            <h1 style={{ fontSize: 22, fontWeight: 900 }}>{t("auth.regTitle")}</h1>
+            <h1 style={{ fontSize: 22, fontWeight: 900 }}>Профиль деректері</h1>
+
+            <p className="text-muted" style={{ fontSize: 13, marginTop: 4 }}>
+              Аты-жөніңізді енгізіңіз. ИП немесе компания атауы міндетті емес.
+            </p>
+
             <div style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 18 }}>
               <div>
-                <input className="input" placeholder={t("auth.fullName")} value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} />
-                {errors.full_name && <div className="text-danger" style={{ fontSize: 12, marginTop: 6 }}>{errors.full_name}</div>}
-              </div>
-              <input className="input" placeholder={t("auth.companyName")} value={form.company_name} onChange={(e) => setForm({ ...form, company_name: e.target.value })} />
-              {role === "driver" && (
-                <>
-                  <select className="input" value={form.vehicle_type} onChange={(e) => setForm({ ...form, vehicle_type: e.target.value })}>
-                    {VEHICLE_TYPES.map((v) => <option key={v}>{v}</option>)}
-                  </select>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                    <input className="input" type="number" placeholder={t("auth.capacity")} value={form.load_capacity} onChange={(e) => setForm({ ...form, load_capacity: e.target.value })} />
-                    <input className="input" type="number" placeholder={t("auth.volume")} value={form.volume} onChange={(e) => setForm({ ...form, volume: e.target.value })} />
+                <input
+                  className="input"
+                  placeholder={t("auth.fullName")}
+                  value={form.full_name}
+                  onChange={(e) => setForm({ ...form, full_name: e.target.value })}
+                />
+
+                {errors.full_name && (
+                  <div className="text-danger" style={{ fontSize: 12, marginTop: 6 }}>
+                    {errors.full_name}
                   </div>
-                  <select className="input" value={form.current_city} onChange={(e) => setForm({ ...form, current_city: e.target.value })}>
-                    {CITIES.map((c) => <option key={c}>{c}</option>)}
-                  </select>
-                </>
-              )}
+                )}
+              </div>
+
+              <input
+                className="input"
+                placeholder="ИП / Компания атауы (міндетті емес)"
+                value={form.company_name}
+                onChange={(e) => setForm({ ...form, company_name: e.target.value })}
+              />
             </div>
-            <button className="btn primary w-full" style={{ width: "100%", marginTop: 20 }} onClick={finishRegister}>{t("auth.finish")}</button>
-            <button className="back-btn" style={{ marginTop: 14 }} onClick={() => setStep("role")}>← {t("common.back")}</button>
+
+            <button className="btn primary" style={{ width: "100%", marginTop: 20 }} disabled={busy} onClick={goToRole}>
+              Жалғастыру
+            </button>
+
+            <button className="back-btn" style={{ marginTop: 14 }} onClick={() => setStep("otp")}>
+              ← {t("common.back")}
+            </button>
+          </>
+        )}
+
+        {step === "role" && (
+          <>
+            <h1 style={{ fontSize: 22, fontWeight: 900 }}>{t("auth.roleTitle")}</h1>
+
+            <p className="text-muted" style={{ fontSize: 13, marginTop: 4 }}>
+              Қолданбаны қай рөлмен бастайсыз?
+            </p>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 20 }}>
+              <button className="role-card" disabled={busy} onClick={() => finishRegister("cargo_owner")}>
+                <div className="role-icon accent">
+                  <Icon.package />
+                </div>
+
+                <div>
+                  <div style={{ fontWeight: 800 }}>{t("auth.roleOwner")}</div>
+                  <div className="text-muted" style={{ fontSize: 12 }}>
+                    {t("auth.roleOwnerDesc")}
+                  </div>
+                </div>
+              </button>
+
+              <button className="role-card" disabled={busy} onClick={() => finishRegister("driver")}>
+                <div className="role-icon dark">
+                  <Icon.truck />
+                </div>
+
+                <div>
+                  <div style={{ fontWeight: 800 }}>{t("auth.roleDriver")}</div>
+                  <div className="text-muted" style={{ fontSize: 12 }}>
+                    {t("auth.roleDriverDesc")}
+                  </div>
+                </div>
+              </button>
+            </div>
+
+            <button className="back-btn" style={{ marginTop: 14 }} disabled={busy} onClick={() => setStep("register")}>
+              ← {t("common.back")}
+            </button>
           </>
         )}
 
         {step === "done" && (
           <div className="success-screen">
-            <div className="success-icon"><Icon.check style={{ width: 32, height: 32 }} /></div>
-            <h1 style={{ fontSize: 20, fontWeight: 900 }}>{t("auth.created")}</h1>
+            <div className="success-icon">
+              <Icon.check style={{ width: 32, height: 32 }} />
+            </div>
+
+            <h1 style={{ fontSize: 20, fontWeight: 900 }}>
+              {t("auth.created")}
+            </h1>
           </div>
         )}
       </div>

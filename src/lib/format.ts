@@ -29,3 +29,10 @@ export function initials(name?: string): string {
     .join("")
     .toUpperCase();
 }
+
+export function maskPhones(text: string) {
+  return text.replace(
+    /(\+?\d[\d\s\-()]{7,}\d)/g,
+    "***********"
+  );
+}

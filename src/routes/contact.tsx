@@ -50,12 +50,6 @@ function Contact() {
           <div className="text-muted" style={{ fontSize: 13 }}>support@argo.kz</div>
         </a>
       </div>
-
-      <div className="card" style={{ marginTop: 20 }}>
-        <input className="input" placeholder={t("auth.fullName")} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-        <textarea className="input" style={{ marginTop: 12, minHeight: 100, resize: "vertical" }} placeholder={t("complaint.description")} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} />
-        <button className="btn primary" style={{ marginTop: 12 }} onClick={send}>{t("complaint.submit")}</button>
-      </div>
     </AppShell>
   );
 }

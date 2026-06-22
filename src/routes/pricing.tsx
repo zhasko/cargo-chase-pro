@@ -24,13 +24,19 @@ function Pricing() {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const choose = async (plan: "monthly" | "yearly") => {
-    if (!user) { navigate({ to: "/auth" }); return; }
-    if (user.role !== "driver") { toast.info(t("pricing.ownerFree")); return; }
-    await subscribe(user.id, plan);
-    toast.success(t("sub.active"));
-    navigate({ to: "/subscription" });
-  };
+  const choose = (plan: "monthly" | "yearly") => {
+  if (!user) {
+    navigate({ to: "/auth" });
+    return;
+  }
+
+  if (user.role !== "driver") {
+    toast.info("Жүк иелеріне жазылым қажет емес");
+    return;
+  }
+
+  navigate({ to: "/subscription", search: { plan } });
+};
 
   const driverFeatures = [t("pricing.f1"), t("pricing.f2"), t("pricing.f3"), t("pricing.f4")];
 

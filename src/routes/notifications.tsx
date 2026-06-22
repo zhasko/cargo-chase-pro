@@ -9,8 +9,7 @@ import { shortDate } from "@/lib/format";
 import { useAuth } from "@/lib/store";
 
 export const Route = createFileRoute("/notifications")({
-  head: () => ({ meta: [{ title: "Хабарламалар — ARGO" }, { name: "robots", content: "noindex" }] }),
-  component: Notifications,
+  component: () => null,
 });
 
 function Notifications() {

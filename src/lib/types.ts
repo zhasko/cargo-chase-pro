@@ -3,7 +3,7 @@ export type Lang = "kk" | "ru" | "en";
 
 export type OrderStatus = "active" | "accepted" | "archived" | "deleted";
 export type SubPlan = "trial" | "monthly" | "yearly";
-export type SubStatus = "active" | "expired";
+export type SubStatus = "active" | "expired" | "cancelled";
 export type ComplaintStatus = "new" | "in_review" | "closed";
 export type ComplaintReason = "fake_order" | "no_answer" | "wrong_info" | "fraud" | "other";
 
@@ -44,20 +44,24 @@ export interface Order {
   created_at: string;
   views: number;
   phone_views: number;
+  contact_phone?: string;
 }
 
 export interface Truck {
   id: string;
   driver_id: string;
   current_city: string;
-  destination_city: string; // city or "any"
+  destination_city: string;
   vehicle_type: string;
   load_capacity: number;
   volume: number;
   comment?: string;
   ready_date: string;
-  status: "active" | "inactive";
+  status: "active" | "inactive" | "archived" | "deleted";
   created_at: string;
+  views?: number;
+  phone_views?: number;
+  contact_phone?: string;
 }
 
 export interface Subscription {
