@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Icon } from "@/components/icons";
@@ -7,10 +7,14 @@ import { useAuth } from "@/lib/store";
 import { supabase } from "@/lib/supabase";
 import type { Lang, Role } from "@/lib/types";
 
+
 const AUTH_DRAFT_KEY = "argo_auth_draft_v1";
 const WHATSAPP_BOT_NUMBER = "77011250468";
 
 export const Route = createFileRoute("/auth")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    redirect: typeof search.redirect === "string" ? search.redirect : "/",
+  }),
   head: () => ({
     meta: [
       { title: "Кіру — ARGO" },
@@ -36,7 +40,8 @@ function AuthPage() {
   const { t, lang, setLang } = useI18n();
   const navigate = useNavigate();
   const { findByPhone, loginExisting, register } = useAuth();
-
+  const search = useSearch({ from: "/auth" });
+  const redirectTo = search.redirect || "/";
   const [step, setStep] = useState<Step>("phone");
   const [phone, setPhone] = useState("+7 ");
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
@@ -165,7 +170,7 @@ function AuthPage() {
         loginExisting(existing);
         clearDraft();
         toast.success("Кіру сәтті өтті");
-        navigate({ to: existing.role === "admin" ? "/admin" : "/" });
+        navigate({ to: existing.role === "admin" ? "/admin" : redirectTo as any });
         return;
       }
 

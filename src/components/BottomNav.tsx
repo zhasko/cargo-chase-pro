@@ -39,18 +39,41 @@ export function BottomNav() {
       <div className="bottom-nav-inner">
         {items.map((it) => {
           const Comp = Icon[it.icon];
-          const active = pathname === it.to;
+          const active = pathname === it.to || pathname.startsWith(it.to + "/");
+
           if (it.big) {
             return (
-              <button key={it.to} className="bn-item bn-big" onClick={() => navigate({ to: it.to })}>
+              <button
+                key={it.to}
+                type="button"
+                aria-label={t(it.labelKey)}
+                className="bn-item bn-big"
+                onClick={() => navigate({ to: it.to as any })}
+              >
                 <div className="bn-icon-wrap">
-                  <Comp className="bn-icon" />
+                  <Icon.plus
+                    className="bn-icon bn-plus-icon"
+                    style={{
+                      width: 30,
+                      height: 30,
+                      color: "#111827",
+                      stroke: "#111827",
+                      strokeWidth: 3,
+                      display: "block",
+                    }}
+                  />
                 </div>
               </button>
             );
           }
+
           return (
-            <button key={it.to} className={`bn-item${active ? " active" : ""}`} onClick={() => navigate({ to: it.to })}>
+            <button
+              key={it.to}
+              type="button"
+              className={`bn-item${active ? " active" : ""}`}
+              onClick={() => navigate({ to: it.to as any })}
+            >
               <Comp className="bn-icon" />
               <span>{t(it.labelKey)}</span>
             </button>

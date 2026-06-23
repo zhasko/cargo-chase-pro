@@ -20,6 +20,13 @@ export function Header() {
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
+  const login = () => {
+    navigate({
+      to: "/auth",
+      search: { redirect: pathname },
+    });
+  };
+
   return (
     <header className="app-header">
       <div className="header-inner">
@@ -27,6 +34,7 @@ export function Header() {
           <div className="logo-icon">A</div>
           ARGO
         </Link>
+
         <nav className="nav-links">
           {NAV.map((n) => (
             <Link
@@ -38,6 +46,7 @@ export function Header() {
             </Link>
           ))}
         </nav>
+
         <div className="header-right">
           <select
             className="lang-select"
@@ -49,20 +58,42 @@ export function Header() {
             <option value="ru">РУС</option>
             <option value="en">ENG</option>
           </select>
+
           {user?.role === "admin" && (
-            <button className="btn ghost" style={{ padding: "6px 12px", fontSize: 12 }} onClick={() => navigate({ to: "/admin" })}>
+            <button
+              className="btn ghost"
+              style={{ padding: "6px 12px", fontSize: 12 }}
+              onClick={() => navigate({ to: "/admin" })}
+            >
               <Icon.shield /> {t("nav.admin")}
             </button>
           )}
+
           {user ? (
             <button className="user-btn" onClick={() => navigate({ to: "/profile" })}>
-              <div style={{ width: 24, height: 24, borderRadius: 7, background: "var(--accent)", color: "var(--accent-fg)", display: "grid", placeItems: "center", fontSize: 11, fontWeight: 900 }}>
+              <div
+                style={{
+                  width: 24,
+                  height: 24,
+                  borderRadius: 7,
+                  background: "var(--accent)",
+                  color: "var(--accent-fg)",
+                  display: "grid",
+                  placeItems: "center",
+                  fontSize: 11,
+                  fontWeight: 900,
+                }}
+              >
                 {initials(user.full_name)}
               </div>
               <span>{user.full_name}</span>
             </button>
           ) : (
-            <button className="btn primary" style={{ padding: "7px 16px", fontSize: 13 }} onClick={() => navigate({ to: "/auth" })}>
+            <button
+              className="btn primary"
+              style={{ padding: "7px 16px", fontSize: 13 }}
+              onClick={login}
+            >
               {t("common.login")}
             </button>
           )}
