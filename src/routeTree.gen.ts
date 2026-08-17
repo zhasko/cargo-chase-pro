@@ -9,105 +9,35 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SubscriptionRouteImport } from './routes/subscription'
-import { Route as StatisticsRouteImport } from './routes/statistics'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as SettingsRouteImport } from './routes/settings'
-import { Route as ProfileRouteImport } from './routes/profile'
-import { Route as PricingRouteImport } from './routes/pricing'
-import { Route as PaymentsRouteImport } from './routes/payments'
-import { Route as NotificationsRouteImport } from './routes/notifications'
-import { Route as MyTruckRouteImport } from './routes/my-truck'
-import { Route as MyCargoRouteImport } from './routes/my-cargo'
-import { Route as FavoritesRouteImport } from './routes/favorites'
-import { Route as FaqRouteImport } from './routes/faq'
-import { Route as ContactRouteImport } from './routes/contact'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as ArgoControlRouteImport } from './routes/argo-control'
-import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as TrucksIndexRouteImport } from './routes/trucks.index'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as ArgoControlRouteImport } from './routes/argo-control'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as FaqRouteImport } from './routes/faq'
+import { Route as FavoritesRouteImport } from './routes/favorites'
+import { Route as MyCargoRouteImport } from './routes/my-cargo'
+import { Route as MyTruckRouteImport } from './routes/my-truck'
+import { Route as NotificationsRouteImport } from './routes/notifications'
+import { Route as PaymentsRouteImport } from './routes/payments'
+import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as StatisticsRouteImport } from './routes/statistics'
+import { Route as SubscriptionRouteImport } from './routes/subscription'
 import { Route as OrdersIndexRouteImport } from './routes/orders.index'
-import { Route as TrucksNewRouteImport } from './routes/trucks.new'
-import { Route as TrucksIdRouteImport } from './routes/trucks.$id'
-import { Route as OrdersNewRouteImport } from './routes/orders.new'
 import { Route as OrdersIdRouteImport } from './routes/orders.$id'
-import { Route as TrucksIdEditRouteImport } from './routes/trucks.$id.edit'
+import { Route as OrdersNewRouteImport } from './routes/orders.new'
+import { Route as TrucksIndexRouteImport } from './routes/trucks.index'
+import { Route as TrucksIdRouteImport } from './routes/trucks.$id'
+import { Route as TrucksNewRouteImport } from './routes/trucks.new'
 import { Route as OrdersIdEditRouteImport } from './routes/orders.$id.edit'
+import { Route as TrucksIdEditRouteImport } from './routes/trucks.$id.edit'
 
-const SubscriptionRoute = SubscriptionRouteImport.update({
-  id: '/subscription',
-  path: '/subscription',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const StatisticsRoute = StatisticsRouteImport.update({
-  id: '/statistics',
-  path: '/statistics',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SettingsRoute = SettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProfileRoute = ProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PricingRoute = PricingRouteImport.update({
-  id: '/pricing',
-  path: '/pricing',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PaymentsRoute = PaymentsRouteImport.update({
-  id: '/payments',
-  path: '/payments',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NotificationsRoute = NotificationsRouteImport.update({
-  id: '/notifications',
-  path: '/notifications',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MyTruckRoute = MyTruckRouteImport.update({
-  id: '/my-truck',
-  path: '/my-truck',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MyCargoRoute = MyCargoRouteImport.update({
-  id: '/my-cargo',
-  path: '/my-cargo',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FavoritesRoute = FavoritesRouteImport.update({
-  id: '/favorites',
-  path: '/favorites',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FaqRoute = FaqRouteImport.update({
-  id: '/faq',
-  path: '/faq',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContactRoute = ContactRouteImport.update({
-  id: '/contact',
-  path: '/contact',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ArgoControlRoute = ArgoControlRouteImport.update({
-  id: '/argo-control',
-  path: '/argo-control',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -115,14 +45,79 @@ const AdminRoute = AdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const ArgoControlRoute = ArgoControlRouteImport.update({
+  id: '/argo-control',
+  path: '/argo-control',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TrucksIndexRoute = TrucksIndexRouteImport.update({
-  id: '/trucks/',
-  path: '/trucks/',
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FavoritesRoute = FavoritesRouteImport.update({
+  id: '/favorites',
+  path: '/favorites',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MyCargoRoute = MyCargoRouteImport.update({
+  id: '/my-cargo',
+  path: '/my-cargo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MyTruckRoute = MyTruckRouteImport.update({
+  id: '/my-truck',
+  path: '/my-truck',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaymentsRoute = PaymentsRouteImport.update({
+  id: '/payments',
+  path: '/payments',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StatisticsRoute = StatisticsRouteImport.update({
+  id: '/statistics',
+  path: '/statistics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SubscriptionRoute = SubscriptionRouteImport.update({
+  id: '/subscription',
+  path: '/subscription',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OrdersIndexRoute = OrdersIndexRouteImport.update({
@@ -130,14 +125,9 @@ const OrdersIndexRoute = OrdersIndexRouteImport.update({
   path: '/orders/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TrucksNewRoute = TrucksNewRouteImport.update({
-  id: '/trucks/new',
-  path: '/trucks/new',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TrucksIdRoute = TrucksIdRouteImport.update({
-  id: '/trucks/$id',
-  path: '/trucks/$id',
+const OrdersIdRoute = OrdersIdRouteImport.update({
+  id: '/orders/$id',
+  path: '/orders/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OrdersNewRoute = OrdersNewRouteImport.update({
@@ -145,20 +135,30 @@ const OrdersNewRoute = OrdersNewRouteImport.update({
   path: '/orders/new',
   getParentRoute: () => rootRouteImport,
 } as any)
-const OrdersIdRoute = OrdersIdRouteImport.update({
-  id: '/orders/$id',
-  path: '/orders/$id',
+const TrucksIndexRoute = TrucksIndexRouteImport.update({
+  id: '/trucks/',
+  path: '/trucks/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TrucksIdEditRoute = TrucksIdEditRouteImport.update({
-  id: '/edit',
-  path: '/edit',
-  getParentRoute: () => TrucksIdRoute,
+const TrucksIdRoute = TrucksIdRouteImport.update({
+  id: '/trucks/$id',
+  path: '/trucks/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TrucksNewRoute = TrucksNewRouteImport.update({
+  id: '/trucks/new',
+  path: '/trucks/new',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const OrdersIdEditRoute = OrdersIdEditRouteImport.update({
   id: '/edit',
   path: '/edit',
   getParentRoute: () => OrdersIdRoute,
+} as any)
+const TrucksIdEditRoute = TrucksIdEditRouteImport.update({
+  id: '/edit',
+  path: '/edit',
+  getParentRoute: () => TrucksIdRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -355,109 +355,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/subscription': {
-      id: '/subscription'
-      path: '/subscription'
-      fullPath: '/subscription'
-      preLoaderRoute: typeof SubscriptionRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/statistics': {
-      id: '/statistics'
-      path: '/statistics'
-      fullPath: '/statistics'
-      preLoaderRoute: typeof StatisticsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/settings': {
-      id: '/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof SettingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/profile': {
-      id: '/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof ProfileRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/pricing': {
-      id: '/pricing'
-      path: '/pricing'
-      fullPath: '/pricing'
-      preLoaderRoute: typeof PricingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/payments': {
-      id: '/payments'
-      path: '/payments'
-      fullPath: '/payments'
-      preLoaderRoute: typeof PaymentsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/notifications': {
-      id: '/notifications'
-      path: '/notifications'
-      fullPath: '/notifications'
-      preLoaderRoute: typeof NotificationsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/my-truck': {
-      id: '/my-truck'
-      path: '/my-truck'
-      fullPath: '/my-truck'
-      preLoaderRoute: typeof MyTruckRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/my-cargo': {
-      id: '/my-cargo'
-      path: '/my-cargo'
-      fullPath: '/my-cargo'
-      preLoaderRoute: typeof MyCargoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/favorites': {
-      id: '/favorites'
-      path: '/favorites'
-      fullPath: '/favorites'
-      preLoaderRoute: typeof FavoritesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/faq': {
-      id: '/faq'
-      path: '/faq'
-      fullPath: '/faq'
-      preLoaderRoute: typeof FaqRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contact': {
-      id: '/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/argo-control': {
-      id: '/argo-control'
-      path: '/argo-control'
-      fullPath: '/argo-control'
-      preLoaderRoute: typeof ArgoControlRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -467,18 +369,109 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/argo-control': {
+      id: '/argo-control'
+      path: '/argo-control'
+      fullPath: '/argo-control'
+      preLoaderRoute: typeof ArgoControlRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/trucks/': {
-      id: '/trucks/'
-      path: '/trucks'
-      fullPath: '/trucks/'
-      preLoaderRoute: typeof TrucksIndexRouteImport
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/favorites': {
+      id: '/favorites'
+      path: '/favorites'
+      fullPath: '/favorites'
+      preLoaderRoute: typeof FavoritesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/my-cargo': {
+      id: '/my-cargo'
+      path: '/my-cargo'
+      fullPath: '/my-cargo'
+      preLoaderRoute: typeof MyCargoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/my-truck': {
+      id: '/my-truck'
+      path: '/my-truck'
+      fullPath: '/my-truck'
+      preLoaderRoute: typeof MyTruckRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payments': {
+      id: '/payments'
+      path: '/payments'
+      fullPath: '/payments'
+      preLoaderRoute: typeof PaymentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/statistics': {
+      id: '/statistics'
+      path: '/statistics'
+      fullPath: '/statistics'
+      preLoaderRoute: typeof StatisticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/subscription': {
+      id: '/subscription'
+      path: '/subscription'
+      fullPath: '/subscription'
+      preLoaderRoute: typeof SubscriptionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/orders/': {
@@ -488,18 +481,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrdersIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/trucks/new': {
-      id: '/trucks/new'
-      path: '/trucks/new'
-      fullPath: '/trucks/new'
-      preLoaderRoute: typeof TrucksNewRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/trucks/$id': {
-      id: '/trucks/$id'
-      path: '/trucks/$id'
-      fullPath: '/trucks/$id'
-      preLoaderRoute: typeof TrucksIdRouteImport
+    '/orders/$id': {
+      id: '/orders/$id'
+      path: '/orders/$id'
+      fullPath: '/orders/$id'
+      preLoaderRoute: typeof OrdersIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/orders/new': {
@@ -509,19 +495,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OrdersNewRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/orders/$id': {
-      id: '/orders/$id'
-      path: '/orders/$id'
-      fullPath: '/orders/$id'
-      preLoaderRoute: typeof OrdersIdRouteImport
+    '/trucks/': {
+      id: '/trucks/'
+      path: '/trucks'
+      fullPath: '/trucks/'
+      preLoaderRoute: typeof TrucksIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/trucks/$id/edit': {
-      id: '/trucks/$id/edit'
-      path: '/edit'
-      fullPath: '/trucks/$id/edit'
-      preLoaderRoute: typeof TrucksIdEditRouteImport
-      parentRoute: typeof TrucksIdRoute
+    '/trucks/$id': {
+      id: '/trucks/$id'
+      path: '/trucks/$id'
+      fullPath: '/trucks/$id'
+      preLoaderRoute: typeof TrucksIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/trucks/new': {
+      id: '/trucks/new'
+      path: '/trucks/new'
+      fullPath: '/trucks/new'
+      preLoaderRoute: typeof TrucksNewRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/orders/$id/edit': {
       id: '/orders/$id/edit'
@@ -529,6 +522,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/orders/$id/edit'
       preLoaderRoute: typeof OrdersIdEditRouteImport
       parentRoute: typeof OrdersIdRoute
+    }
+    '/trucks/$id/edit': {
+      id: '/trucks/$id/edit'
+      path: '/edit'
+      fullPath: '/trucks/$id/edit'
+      preLoaderRoute: typeof TrucksIdEditRouteImport
+      parentRoute: typeof TrucksIdRoute
     }
   }
 }
