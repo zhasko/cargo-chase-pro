@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
+
 import { AppShell } from "@/components/AppShell";
 import { useI18n } from "@/lib/i18n";
 import { CITIES, VEHICLE_TYPES } from "@/lib/mock-data";
@@ -19,6 +20,115 @@ export const Route = createFileRoute("/orders/new")({
 
 const todayISO = () => new Date().toISOString().slice(0, 10);
 
+const ORDER_DRAFT_PREFIX = "argo_order_draft_v1";
+
+type OrderForm = {
+  cargo_name: string;
+  vehicle_type: string;
+  weight: number | "";
+  volume: number | "";
+  from_city: string;
+  from_address: string;
+  to_city: string;
+  to_address: string;
+  loading_date: string;
+  price: number | "";
+  negotiable: boolean;
+  contact_phone: string;
+  comment: string;
+};
+
+function createDefaultForm(phone = ""): OrderForm {
+  return {
+    cargo_name: "",
+    vehicle_type: VEHICLE_TYPES[0],
+    weight: "",
+    volume: "",
+    from_city: CITIES[0],
+    from_address: "",
+    to_city: CITIES[1],
+    to_address: "",
+    loading_date: todayISO(),
+    price: "",
+    negotiable: false,
+    contact_phone: phone,
+    comment: "",
+  };
+}
+
+function getDraftKey(userId?: string) {
+  if (!userId) {
+    return `${ORDER_DRAFT_PREFIX}_guest`;
+  }
+
+  return `${ORDER_DRAFT_PREFIX}_${userId}`;
+}
+
+function loadDraft(
+  userId?: string,
+  phone = ""
+): OrderForm {
+  const defaultForm = createDefaultForm(phone);
+
+  if (typeof window === "undefined") {
+    return defaultForm;
+  }
+
+  try {
+    const key = getDraftKey(userId);
+    const saved = localStorage.getItem(key);
+
+    if (!saved) {
+      return defaultForm;
+    }
+
+    const parsed = JSON.parse(saved);
+
+    return {
+      ...defaultForm,
+      ...parsed,
+
+      // Егер аккаунттағы телефон өзгерсе,
+      // жаңа телефонды қолданамыз.
+      contact_phone:
+        parsed.contact_phone || phone || "",
+    };
+  } catch (error) {
+    console.warn("Order draft load error:", error);
+    return defaultForm;
+  }
+}
+
+function saveDraft(
+  userId: string | undefined,
+  form: OrderForm
+) {
+  if (typeof window === "undefined") return;
+
+  try {
+    const key = getDraftKey(userId);
+
+    localStorage.setItem(
+      key,
+      JSON.stringify(form)
+    );
+  } catch (error) {
+    console.warn("Order draft save error:", error);
+  }
+}
+
+function clearDraft(userId?: string) {
+  if (typeof window === "undefined") return;
+
+  try {
+    const key = getDraftKey(userId);
+
+    localStorage.removeItem(key);
+  } catch (error) {
+    console.warn("Order draft clear error:", error);
+  }
+}
+
 function OrderNew() {
   const { t } = useI18n();
   const navigate = useNavigate();
@@ -26,29 +136,64 @@ function OrderNew() {
 
   const [busy, setBusy] = useState(false);
 
-  const [form, setForm] = useState({
-    cargo_name: "",
-    vehicle_type: VEHICLE_TYPES[0],
-    weight: "" as number | "",
-    volume: "" as number | "",
-    from_city: CITIES[0],
-    from_address: "",
-    to_city: CITIES[1],
-    to_address: "",
-    loading_date: todayISO(),
-    price: "" as number | "",
-    negotiable: false,
-    contact_phone: user?.phone || "",
-    comment: "",
-  });
+  const [form, setForm] = useState<OrderForm>(() =>
+    createDefaultForm(user?.phone || "")
+  );
 
-  const set = (p: Partial<typeof form>) => {
-    setForm((f) => ({ ...f, ...p }));
+  const [draftLoaded, setDraftLoaded] = useState(false);
+
+  /*
+   * =========================================================
+   * DRAFT-ты ЖҮКТЕУ
+   * =========================================================
+   *
+   * Аккаунт анықталғаннан кейін оның жеке draft-ын
+   * localStorage-тан алып шығамыз.
+   */
+  useEffect(() => {
+    if (!user) {
+      setDraftLoaded(true);
+      return;
+    }
+
+    const draft = loadDraft(
+      user.id,
+      user.phone || ""
+    );
+
+    setForm(draft);
+    setDraftLoaded(true);
+  }, [user?.id]);
+
+  /*
+   * =========================================================
+   * ФОРМАНЫ АВТОМАТТЫ САҚТАУ
+   * =========================================================
+   *
+   * Қолданушы кез келген input-ты өзгертсе,
+   * форма localStorage-қа автоматты түрде жазылады.
+   */
+  useEffect(() => {
+    if (!draftLoaded) return;
+
+    if (!user) return;
+
+    saveDraft(user.id, form);
+  }, [form, user?.id, draftLoaded]);
+
+  const set = (patch: Partial<OrderForm>) => {
+    setForm((current) => ({
+      ...current,
+      ...patch,
+    }));
   };
 
   const submit = async () => {
     if (!user) {
-      toast.error("Жүк жариялау үшін алдымен кіріңіз");
+      toast.error(
+        "Жүк жариялау үшін алдымен кіріңіз"
+      );
+
       navigate({ to: "/auth" });
       return;
     }
@@ -63,69 +208,144 @@ function OrderNew() {
       return;
     }
 
-    if (form.weight === "" || Number(form.weight) <= 0) {
+    if (
+      form.weight === "" ||
+      Number(form.weight) <= 0
+    ) {
       toast.error("Салмақты дұрыс енгізіңіз");
       return;
     }
 
-    if (form.volume === "" || Number(form.volume) <= 0) {
+    if (
+      form.volume === "" ||
+      Number(form.volume) <= 0
+    ) {
       toast.error("Көлемді дұрыс енгізіңіз");
       return;
     }
 
     if (!form.from_city) {
-      toast.error("Тиеу қаласын таңдаңыз");
+      toast.error(
+        "Тиеу қаласын таңдаңыз"
+      );
       return;
     }
 
     if (!form.to_city) {
-      toast.error("Түсіру қаласын таңдаңыз");
+      toast.error(
+        "Түсіру қаласын таңдаңыз"
+      );
       return;
     }
 
     if (!form.loading_date) {
-      toast.error("Тиеу күнін таңдаңыз");
+      toast.error(
+        "Тиеу күнін таңдаңыз"
+      );
       return;
     }
 
-    if (!form.negotiable && (form.price === "" || Number(form.price) <= 0)) {
-      toast.error("Бағаны енгізіңіз немесе келісімді деп белгілеңіз");
+    if (
+      !form.negotiable &&
+      (
+        form.price === "" ||
+        Number(form.price) <= 0
+      )
+    ) {
+      toast.error(
+        "Бағаны енгізіңіз немесе келісімді деп белгілеңіз"
+      );
+
       return;
     }
 
     setBusy(true);
 
     try {
-      const count = await countTodayOrders(user.id);
+      const count =
+        await countTodayOrders(user.id);
 
       if (count >= 10) {
-        toast.error(t("order.limitReached"));
+        toast.error(
+          t("order.limitReached")
+        );
+
         return;
       }
 
-      const order = await createOrder(
-        {
-          cargo_name: form.cargo_name.trim(),
-          vehicle_type: form.vehicle_type,
-          weight: Number(form.weight),
-          volume: Number(form.volume),
-          from_city: form.from_city,
-          from_address: form.from_address.trim() || undefined,
-          to_city: form.to_city,
-          to_address: form.to_address.trim() || undefined,
-          loading_date: form.loading_date,
-          price: form.negotiable ? undefined : Number(form.price),
-          negotiable: form.negotiable,
-          contact_phone: form.contact_phone.trim() || user.phone,
-          comment: form.comment.trim() || undefined,
-        },
-        user.id
+      const order =
+        await createOrder(
+          {
+            cargo_name:
+              form.cargo_name.trim(),
+
+            vehicle_type:
+              form.vehicle_type,
+
+            weight:
+              Number(form.weight),
+
+            volume:
+              Number(form.volume),
+
+            from_city:
+              form.from_city,
+
+            from_address:
+              form.from_address.trim() ||
+              undefined,
+
+            to_city:
+              form.to_city,
+
+            to_address:
+              form.to_address.trim() ||
+              undefined,
+
+            loading_date:
+              form.loading_date,
+
+            price:
+              form.negotiable
+                ? undefined
+                : Number(form.price),
+
+            negotiable:
+              form.negotiable,
+
+            contact_phone:
+              form.contact_phone.trim() ||
+              user.phone,
+
+            comment:
+              form.comment.trim() ||
+              undefined,
+          },
+          user.id
+        );
+
+      /*
+       * Жүк сәтті жарияланды.
+       *
+       * Сондықтан draft енді қажет емес.
+       */
+      clearDraft(user.id);
+
+      toast.success(
+        t("order.publishSuccess")
       );
 
-      toast.success(t("order.publishSuccess"));
-      navigate({ to: "/orders/$id", params: { id: order.id } });
+      navigate({
+        to: "/orders/$id",
+        params: {
+          id: order.id,
+        },
+      });
     } catch (e: any) {
-      toast.error(e?.message || "Жүк жариялау кезінде қате шықты");
+      toast.error(
+        e?.message ||
+          "Жүк жариялау кезінде қате шықты"
+      );
     } finally {
       setBusy(false);
     }
@@ -133,12 +353,22 @@ function OrderNew() {
 
   return (
     <AppShell width="narrow">
-      <button className="back-btn" onClick={() => navigate({ to: "/" })}>
+      <button
+        className="back-btn"
+        onClick={() =>
+          navigate({ to: "/" })
+        }
+      >
         ← {t("common.back")}
       </button>
 
-      <h1 className="page-title">{t("nav.addCargo")}</h1>
-      <p className="page-sub">Жүк туралы ақпаратты толтырыңыз</p>
+      <h1 className="page-title">
+        {t("nav.addCargo")}
+      </h1>
+
+      <p className="page-sub">
+        Жүк туралы ақпаратты толтырыңыз
+      </p>
 
       <div
         className="card"
@@ -153,7 +383,12 @@ function OrderNew() {
           <input
             className="input"
             value={form.cargo_name}
-            onChange={(e) => set({ cargo_name: e.target.value })}
+            onChange={(e) =>
+              set({
+                cargo_name:
+                  e.target.value,
+              })
+            }
             placeholder="Мысалы: құрылыс материалы, жиһаз, техника"
           />
         </L>
@@ -162,15 +397,34 @@ function OrderNew() {
           <select
             className="input"
             value={form.vehicle_type}
-            onChange={(e) => set({ vehicle_type: e.target.value })}
+            onChange={(e) =>
+              set({
+                vehicle_type:
+                  e.target.value,
+              })
+            }
           >
-            {VEHICLE_TYPES.map((v) => (
-              <option key={v}>{v}</option>
-            ))}
+            {VEHICLE_TYPES.map(
+              (vehicle) => (
+                <option
+                  key={vehicle}
+                  value={vehicle}
+                >
+                  {vehicle}
+                </option>
+              )
+            )}
           </select>
         </L>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns:
+              "1fr 1fr",
+            gap: 12,
+          }}
+        >
           <L label="Салмақ, т">
             <input
               className="input"
@@ -179,8 +433,18 @@ function OrderNew() {
               step={0.1}
               value={form.weight}
               onChange={(e) => {
-                const value = e.target.value;
-                set({ weight: value === "" ? "" : Math.max(0, Number(value)) });
+                const value =
+                  e.target.value;
+
+                set({
+                  weight:
+                    value === ""
+                      ? ""
+                      : Math.max(
+                          0,
+                          Number(value)
+                        ),
+                });
               }}
               placeholder="20"
             />
@@ -194,8 +458,18 @@ function OrderNew() {
               step={0.1}
               value={form.volume}
               onChange={(e) => {
-                const value = e.target.value;
-                set({ volume: value === "" ? "" : Math.max(0, Number(value)) });
+                const value =
+                  e.target.value;
+
+                set({
+                  volume:
+                    value === ""
+                      ? ""
+                      : Math.max(
+                          0,
+                          Number(value)
+                        ),
+                });
               }}
               placeholder="86"
             />
@@ -206,10 +480,20 @@ function OrderNew() {
           <select
             className="input"
             value={form.from_city}
-            onChange={(e) => set({ from_city: e.target.value })}
+            onChange={(e) =>
+              set({
+                from_city:
+                  e.target.value,
+              })
+            }
           >
-            {CITIES.map((c) => (
-              <option key={c}>{c}</option>
+            {CITIES.map((city) => (
+              <option
+                key={city}
+                value={city}
+              >
+                {city}
+              </option>
             ))}
           </select>
         </L>
@@ -218,7 +502,12 @@ function OrderNew() {
           <input
             className="input"
             value={form.from_address}
-            onChange={(e) => set({ from_address: e.target.value })}
+            onChange={(e) =>
+              set({
+                from_address:
+                  e.target.value,
+              })
+            }
             placeholder="Аудан, көше, үй нөмірі (міндетті емес)"
           />
         </L>
@@ -227,10 +516,20 @@ function OrderNew() {
           <select
             className="input"
             value={form.to_city}
-            onChange={(e) => set({ to_city: e.target.value })}
+            onChange={(e) =>
+              set({
+                to_city:
+                  e.target.value,
+              })
+            }
           >
-            {CITIES.map((c) => (
-              <option key={c}>{c}</option>
+            {CITIES.map((city) => (
+              <option
+                key={city}
+                value={city}
+              >
+                {city}
+              </option>
             ))}
           </select>
         </L>
@@ -239,7 +538,12 @@ function OrderNew() {
           <input
             className="input"
             value={form.to_address}
-            onChange={(e) => set({ to_address: e.target.value })}
+            onChange={(e) =>
+              set({
+                to_address:
+                  e.target.value,
+              })
+            }
             placeholder="Аудан, көше, үй нөмірі (міндетті емес)"
           />
         </L>
@@ -249,16 +553,37 @@ function OrderNew() {
             className="input"
             type="date"
             value={form.loading_date}
-            onChange={(e) => set({ loading_date: e.target.value })}
+            onChange={(e) =>
+              set({
+                loading_date:
+                  e.target.value,
+              })
+            }
           />
         </L>
 
-        <label className="chip" style={{ cursor: "pointer", gap: 6, alignSelf: "flex-start" }}>
+        <label
+          className="chip"
+          style={{
+            cursor: "pointer",
+            gap: 6,
+            alignSelf:
+              "flex-start",
+          }}
+        >
           <input
             type="checkbox"
-            checked={form.negotiable}
-            onChange={(e) => set({ negotiable: e.target.checked })}
+            checked={
+              form.negotiable
+            }
+            onChange={(e) =>
+              set({
+                negotiable:
+                  e.target.checked,
+              })
+            }
           />
+
           Баға келісімді
         </label>
 
@@ -271,8 +596,18 @@ function OrderNew() {
               step={1000}
               value={form.price}
               onChange={(e) => {
-                const value = e.target.value;
-                set({ price: value === "" ? "" : Math.max(0, Number(value)) });
+                const value =
+                  e.target.value;
+
+                set({
+                  price:
+                    value === ""
+                      ? ""
+                      : Math.max(
+                          0,
+                          Number(value)
+                        ),
+                });
               }}
               placeholder="250000"
             />
@@ -282,36 +617,73 @@ function OrderNew() {
         <L label="Байланыс нөмірі">
           <input
             className="input"
-            value={form.contact_phone}
-            onChange={(e) => set({ contact_phone: e.target.value })}
-            placeholder={user?.phone || "+7 777 123 45 67"}
+            value={
+              form.contact_phone
+            }
+            onChange={(e) =>
+              set({
+                contact_phone:
+                  e.target.value,
+              })
+            }
+            placeholder={
+              user?.phone ||
+              "+7 777 123 45 67"
+            }
           />
         </L>
 
         <L label="Қосымша ақпарат">
           <textarea
             className="input"
-            style={{ minHeight: 80, resize: "vertical" }}
+            style={{
+              minHeight: 80,
+              resize: "vertical",
+            }}
             value={form.comment}
-            onChange={(e) => set({ comment: e.target.value })}
+            onChange={(e) =>
+              set({
+                comment:
+                  e.target.value,
+              })
+            }
             placeholder="Мысалы: тиеу кранмен, төлем қолма-қол, тез жеткізу керек..."
           />
         </L>
 
-        <button className="btn accent" disabled={busy} onClick={submit}>
-          {busy ? t("common.loading") : t("common.publish")}
+        <button
+          className="btn accent"
+          disabled={busy}
+          onClick={submit}
+        >
+          {busy
+            ? t("common.loading")
+            : t("common.publish")}
         </button>
       </div>
     </AppShell>
   );
 }
 
-function L({ label, children }: { label: string; children: React.ReactNode }) {
+function L({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
   return (
     <div>
-      <label className="step-label active" style={{ display: "block", marginBottom: 6 }}>
+      <label
+        className="step-label active"
+        style={{
+          display: "block",
+          marginBottom: 6,
+        }}
+      >
         {label}
       </label>
+
       {children}
     </div>
   );

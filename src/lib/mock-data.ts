@@ -146,7 +146,7 @@ const OTHER_CITIES = [
 
 export const CITIES = [
   ...MAJOR_CITIES,
-  ...OTHER_CITIES.sort((a, b) => a.localeCompare(b, "kk")),
+  ...OTHER_CITIES,
 ];
 
 export const VEHICLE_TYPES = [
@@ -213,7 +213,7 @@ export const MOCK_USERS: User[] = [
   { id: "u8", phone: "+7 702 000 0003", full_name: "Жанар Омарова", role: "cargo_owner", status: "active", created_at: "2026-05-06" },
   { id: "u9", phone: "+7 702 000 0004", full_name: "Серік Әбілов", role: "cargo_owner", status: "blocked", created_at: "2026-05-08", company_name: "Tulpar" },
   { id: "u10", phone: "+7 702 000 0005", full_name: "Гүлмира Тұрар", role: "cargo_owner", status: "active", created_at: "2026-05-10" },
-  { id: "admin1", phone: "+7 700 000 0000", full_name: "ARGO Admin", role: "admin", status: "active", created_at: "2026-01-01" },
+  { id: "admin1", phone: "+7 701 125 0468", full_name: "ARGO Admin", role: "admin", status: "active", created_at: "2026-01-01" },
 ];
 
 export const MOCK_ORDERS: Order[] = Array.from({ length: 20 }).map((_, i) => {
@@ -276,13 +276,6 @@ export const MOCK_PAYMENTS: Payment[] = Array.from({ length: 8 }).map((_, i) => 
   created_at: daysFromNow(-i * 3),
   plan: i % 2 === 0 ? "monthly" : "yearly",
 }));
-
-export const MOCK_NOTIFICATIONS: Notification[] = [
-  { id: "n1", user_id: "u1", title: "Маршрут бойынша жаңа жүк", body: "Алматы → Астана, ұн, 20т", type: "new_cargo", read: false, created_at: daysFromNow(0) },
-  { id: "n2", user_id: "u1", title: "Жазылу аяқталып жатыр", body: "3 күн қалды", type: "sub_ending", read: false, created_at: daysFromNow(-1) },
-  { id: "n3", user_id: "u1", title: "Жаңа жүк", body: "Шымкент → Тараз", type: "new_cargo", read: true, created_at: daysFromNow(-2) },
-  { id: "n4", user_id: "u6", title: "Тапсырыс жарияланды", body: "Жүгіңіз орналастырылды", type: "order_published", read: true, created_at: daysFromNow(-1) },
-];
 
 export const MOCK_COMPLAINTS: Complaint[] = [
   { id: "c1", user_id: "u1", target_type: "order", target_id: "o3", reason: "no_answer", status: "new", created_at: daysFromNow(-1), description: "Екінші күн трубка алмайды" },

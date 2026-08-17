@@ -9,12 +9,15 @@ export type ComplaintReason = "fake_order" | "no_answer" | "wrong_info" | "fraud
 
 export interface User {
   id: string;
+  public_id?: string;
   phone: string;
   full_name: string;
   role: Role;
   status: "active" | "blocked";
   created_at: string;
   company_name?: string;
+  avatar_url?: string;
+  is_admin?: boolean;
 }
 
 export interface DriverProfile {
@@ -22,6 +25,7 @@ export interface DriverProfile {
   vehicle_type: string;
   load_capacity: number;
   volume: number;
+  is_admin?: boolean;
 }
 
 export interface Order {

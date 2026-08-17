@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
+
 import { AppShell } from "@/components/AppShell";
 import { CargoCard } from "@/components/CargoCard";
 import { EmptyState } from "@/components/EmptyState";
@@ -9,7 +10,12 @@ import { listOrders, listFavorites } from "@/lib/services";
 import { useAuth } from "@/lib/store";
 
 export const Route = createFileRoute("/favorites")({
-  head: () => ({ meta: [{ title: "Таңдаулылар — ARGO" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({
+    meta: [
+      { title: "Таңдаулылар — ARGO" },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   component: Favorites,
 });
 
@@ -17,21 +23,77 @@ function Favorites() {
   const { t } = useI18n();
   const navigate = useNavigate();
   const { user, ready } = useAuth();
-  useEffect(() => { if (ready && !user) navigate({ to: "/auth" }); }, [ready, user, navigate]);
 
-  const { data } = useQuery({ queryKey: ["orders", "all-for-fav"], queryFn: () => listOrders({ sort: "new" }) });
-  const favIds = listFavorites();
-  const favs = (data ?? []).filter((o) => favIds.includes(o.id));
+  useEffect(() => {
+    if (ready && !user) {
+      navigate({ to: "/auth" });
+    }
+  }, [ready, user, navigate]);
+
+  const ordersQuery = useQuery({
+    queryKey: ["orders", "all-for-fav"],
+    queryFn: () => listOrders({ sort: "new" }),
+    enabled: !!user,
+  });
+
+  const favoritesQuery = useQuery({
+    queryKey: ["favorites", user?.id],
+    queryFn: () => listFavorites(user!.id),
+    enabled: !!user,
+  });
+
+  const favIds = favoritesQuery.data ?? [];
+
+  const favs = (ordersQuery.data ?? []).filter((order) =>
+    favIds.includes(order.id)
+  );
+
+  const loading =
+    !ready ||
+    ordersQuery.isLoading ||
+    favoritesQuery.isLoading;
+
+  if (!ready || !user) {
+    return null;
+  }
 
   return (
     <AppShell width="medium">
-      <button className="back-btn" onClick={() => navigate({ to: "/profile" })}>← {t("common.back")}</button>
-      <h1 className="page-title">{t("profile.favorites")}</h1>
-      {favs.length === 0 ? (
-        <EmptyState title={t("common.empty")} icon="heart" />
+      <h1 className="page-title">
+        {t("profile.favorites")}
+      </h1>
+
+      {loading ? (
+        <div
+          className="text-muted"
+          style={{
+            marginTop: 18,
+            textAlign: "center",
+          }}
+        >
+          Жүктелуде...
+        </div>
+      ) : favs.length === 0 ? (
+        <EmptyState
+          title={t("common.empty")}
+          icon="heart"
+        />
       ) : (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 14, marginTop: 18 }}>
-          {favs.map((o) => <CargoCard key={o.id} order={o} />)}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns:
+              "repeat(auto-fill, minmax(280px, 1fr))",
+            gap: 14,
+            marginTop: 18,
+          }}
+        >
+          {favs.map((order) => (
+            <CargoCard
+              key={order.id}
+              order={order}
+            />
+          ))}
         </div>
       )}
     </AppShell>

@@ -34,15 +34,15 @@ function Contact() {
     <AppShell width="medium">
       <h1 className="page-title">{t("nav.contact")}</h1>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 14, marginTop: 18 }}>
-        <a className="contact-card" href="tel:+77000000000">
+        <a className="contact-card" href="tel:+77011250468">
           <div className="benefit-icon" style={{ width: 38, height: 38 }}><Icon.phone style={{ width: 18, height: 18 }} /></div>
           <div style={{ fontWeight: 800, marginTop: 12 }}>Телефон</div>
-          <div className="text-muted" style={{ fontSize: 13 }}>+7 700 000 0000</div>
+          <div className="text-muted" style={{ fontSize: 13 }}>+7 7011250468</div>
         </a>
-        <a className="contact-card" href="https://wa.me/77000000000" target="_blank" rel="noreferrer">
+        <a className="contact-card" href="https://wa.me/77011250468" target="_blank" rel="noreferrer">
           <div className="benefit-icon" style={{ width: 38, height: 38 }}><Icon.phone style={{ width: 18, height: 18 }} /></div>
           <div style={{ fontWeight: 800, marginTop: 12 }}>WhatsApp</div>
-          <div className="text-muted" style={{ fontSize: 13 }}>+7 700 000 0000</div>
+          <div className="text-muted" style={{ fontSize: 13 }}>+7 7011250468</div>
         </a>
         <a className="contact-card" href="mailto:support@argo.kz">
           <div className="benefit-icon" style={{ width: 38, height: 38 }}><Icon.bell style={{ width: 18, height: 18 }} /></div>

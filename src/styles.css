@@ -302,24 +302,66 @@ select.input {
   cursor: pointer;
 }
 
-.user-btn {
-  display: flex;
+.header-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 20px;
+  height: 56px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border-radius: var(--radius-sm);
-  background: var(--surface2);
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  border: none;
-  max-width: 140px;
 }
 
-.user-btn span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.header-menu {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.menu-button {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  border-radius: 10px;
+  background: var(--surface2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.menu-button span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--fg);
+}
+
+.menu-button:hover {
+  background: var(--border);
+}
+
+.logo {
+  justify-self: center;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 900;
+  font-size: 18px;
+  letter-spacing: -.03em;
+  cursor: pointer;
+}
+
+.header-right {
+  justify-self: end;
+  margin-left: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .page {
@@ -336,59 +378,8 @@ select.input {
   max-width: 880px;
 }
 
-/* ─── Bottom Nav ─── */
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  inset-inline: 0;
-  z-index: 99;
-  background: rgba(249, 249, 246, .97);
-  backdrop-filter: blur(12px);
-  border-top: 1.5px solid var(--border);
-  padding: 8px 0 max(env(safe-area-inset-bottom), 10px);
-}
 
-.bottom-nav-inner {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  max-width: 560px;
-  margin: 0 auto;
-}
 
-.bn-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  padding: 4px 6px;
-  font-size: 10px;
-  font-weight: 600;
-  color: var(--muted);
-  cursor: pointer;
-  background: none;
-  border: none;
-}
-
-.bn-item.active {
-  color: var(--fg);
-}
-
-.bn-icon {
-  width: 22px;
-  height: 22px;
-}
-
-.bn-big .bn-icon-wrap {
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
-  background: var(--accent);
-  color: var(--accent-fg);
-  display: grid;
-  place-items: center;
-  margin-top: -20px;
-  box-shadow: 0 4px 16px rgba(192, 224, 64, .4);
-}
 
 /* ─── Hero FIXED ─── */
 .hero {
@@ -1377,16 +1368,962 @@ select.input {
   }
 }
 
-@media (min-width: 769px) {
-  .bottom-nav {
-    display: none;
-  }
-
   .page {
     padding-bottom: 40px;
   }
 
   .admin-main-mobile-pad {
     padding-bottom: 40px;
+  }
+
+  .menu-btn {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+}
+
+.menu-icon {
+  width: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.menu-icon span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--fg);
+  border-radius: 2px;
+}
+
+/* ─── Header Menu Button ─── */
+
+.header-menu {
+  width: 120px;
+  display: flex;
+  align-items: center;
+}
+
+.menu-button {
+  width: 38px;
+  height: 38px;
+  border: none;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: background .15s;
+}
+
+.menu-button:hover {
+  background: var(--surface2);
+}
+
+.menu-button span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--fg);
+  transition: transform .2s, opacity .2s;
+}
+
+.menu-button.open span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.menu-button.open span:nth-child(2) {
+  opacity: 0;
+}
+
+.menu-button.open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+
+/* ─── Profile Drawer ─── */
+
+.profile-drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+
+  width: min(360px, 88vw);
+
+  background: var(--card);
+  border-right: 1.5px solid var(--border);
+
+  z-index: 500;
+
+  display: flex;
+  flex-direction: column;
+
+  transform: translateX(-100%);
+  transition: transform .28s cubic-bezier(.4, 0, .2, 1);
+
+  box-shadow: 12px 0 40px rgba(0, 0, 0, .08);
+
+  overflow-y: auto;
+}
+
+.profile-drawer.open {
+  transform: translateX(0);
+}
+
+
+/* ─── Drawer Background ─── */
+
+.profile-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+
+  background: rgba(0, 0, 0, .35);
+
+  z-index: 499;
+
+  opacity: 0;
+  visibility: hidden;
+
+  transition: opacity .25s, visibility .25s;
+}
+
+.profile-drawer-backdrop.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+
+/* ─── Drawer Header ─── */
+
+.profile-drawer-header {
+  min-height: 82px;
+
+  padding: 18px 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  border-bottom: 1.5px solid var(--border);
+}
+
+.drawer-avatar {
+  width: 46px;
+  height: 46px;
+  font-size: 18px;
+}
+
+
+/* ─── Close ─── */
+
+.drawer-close {
+  width: 34px;
+  height: 34px;
+
+  border: none;
+  border-radius: 10px;
+
+  background: var(--surface2);
+  color: var(--fg);
+
+  font-size: 26px;
+  line-height: 1;
+
+  display: grid;
+  place-items: center;
+
+  cursor: pointer;
+
+  flex-shrink: 0;
+}
+
+.drawer-close:hover {
+  background: var(--border);
+}
+
+
+/* ─── Drawer Content ─── */
+
+.profile-drawer-content {
+  padding: 14px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+
+/* Drawer ішіндегі menu item */
+
+.profile-drawer .profile-menu-item {
+  min-height: 58px;
+}
+
+
+/* Mobile */
+
+@media (max-width: 768px) {
+  .header-menu {
+    width: auto;
+  }
+
+  .profile-drawer {
+    width: min(340px, 90vw);
+  }
+}
+
+.drawer-avatar:hover .avatar-upload-overlay {
+  opacity: 1;
+}
+
+/* =========================================================
+   ARGO SUBSCRIPTION ISLAND
+   ========================================================= */
+
+.subscription-island {
+  position: fixed;
+  z-index: 9999;
+
+  left: 50%;
+  bottom: 22px;
+
+  width: min(390px, calc(100vw - 28px));
+
+  transform: translateX(-50%);
+
+  padding: 22px 20px 18px;
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 24px;
+
+  background:
+    radial-gradient(
+      circle at 50% -20%,
+      rgba(124, 58, 237, 0.35),
+      transparent 55%
+    ),
+    rgba(15, 16, 25, 0.94);
+
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+
+  box-shadow:
+    0 20px 70px rgba(0, 0, 0, 0.45),
+    0 0 40px rgba(124, 58, 237, 0.16);
+
+  animation:
+    subscriptionIslandIn
+    0.55s
+    cubic-bezier(0.22, 1, 0.36, 1)
+    both,
+    subscriptionIslandFloat
+    4s
+    ease-in-out
+    0.6s
+    infinite;
+
+  overflow: hidden;
+}
+
+/*
+ * Жеңіл animated glow
+ */
+.subscription-island::before {
+  content: "";
+
+  position: absolute;
+
+  width: 180px;
+  height: 180px;
+
+  top: -110px;
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  border-radius: 50%;
+
+  background: rgba(124, 58, 237, 0.25);
+
+  filter: blur(45px);
+
+  pointer-events: none;
+
+  animation:
+    subscriptionGlow
+    3.5s
+    ease-in-out
+    infinite;
+}
+
+/*
+ * Animated border glow
+ */
+.subscription-island::after {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  border-radius: inherit;
+
+  padding: 1px;
+
+  background:
+    linear-gradient(
+      120deg,
+      transparent,
+      rgba(167, 139, 250, 0.5),
+      transparent,
+      rgba(255, 255, 255, 0.18),
+      transparent
+    );
+
+  background-size: 250% 250%;
+
+  animation:
+    subscriptionBorder
+    5s
+    linear
+    infinite;
+
+  pointer-events: none;
+
+  opacity: 0.65;
+}
+
+/* =========================================================
+   HANDLE
+   ========================================================= */
+
+.subscription-island-handle {
+  display: flex;
+  justify-content: center;
+
+  position: relative;
+
+  margin-bottom: 13px;
+}
+
+.subscription-island-handle span {
+  width: 38px;
+  height: 4px;
+
+  border-radius: 999px;
+
+  background: rgba(255, 255, 255, 0.28);
+}
+
+/* =========================================================
+   BADGE
+   ========================================================= */
+
+.subscription-island-badge {
+  position: relative;
+
+  display: inline-flex;
+  align-items: center;
+
+  padding: 5px 9px;
+
+  margin-bottom: 9px;
+
+  border-radius: 999px;
+
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+
+  background: rgba(124, 58, 237, 0.18);
+  border: 1px solid rgba(167, 139, 250, 0.3);
+
+  color: #c4b5fd;
+
+  animation:
+    subscriptionBadgePulse
+    2.5s
+    ease-in-out
+    infinite;
+}
+
+.subscription-island-badge.discount {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.3);
+  color: #fbbf24;
+}
+
+/* =========================================================
+   TITLE
+   ========================================================= */
+
+.subscription-island-title {
+  position: relative;
+
+  font-size: 22px;
+  line-height: 1.05;
+
+  font-weight: 950;
+
+  letter-spacing: -0.6px;
+
+  color: #fff;
+
+  margin-bottom: 7px;
+}
+
+/* =========================================================
+   TEXT
+   ========================================================= */
+
+.subscription-island-text {
+  position: relative;
+
+  font-size: 12px;
+  line-height: 1.5;
+
+  color: rgba(255, 255, 255, 0.62);
+
+  margin-bottom: 13px;
+}
+
+/* =========================================================
+   FEATURES
+   ========================================================= */
+
+.subscription-island-features {
+  position: relative;
+
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 6px;
+
+  margin-bottom: 14px;
+}
+
+.subscription-island-features span {
+  padding: 5px 8px;
+
+  border-radius: 8px;
+
+  background: rgba(255, 255, 255, 0.055);
+
+  border: 1px solid rgba(255, 255, 255, 0.07);
+
+  font-size: 10px;
+
+  color: rgba(255, 255, 255, 0.72);
+}
+
+/* =========================================================
+   PRICE
+   ========================================================= */
+
+.subscription-island-price {
+  position: relative;
+
+  display: flex;
+  align-items: baseline;
+
+  gap: 7px;
+
+  margin-bottom: 14px;
+}
+
+.subscription-island-price .old-price {
+  font-size: 13px;
+
+  color: rgba(255, 255, 255, 0.38);
+
+  text-decoration: line-through;
+}
+
+.subscription-island-price strong {
+  font-size: 25px;
+  font-weight: 950;
+
+  color: #fff;
+}
+
+.subscription-island-price small {
+  font-size: 11px;
+
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* =========================================================
+   BUTTON
+   ========================================================= */
+
+.subscription-island-button {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+
+  min-height: 44px;
+
+  border: none;
+  border-radius: 13px;
+
+  background: var(--accent, #7c3aed);
+
+  color: #fff;
+
+  font-size: 13px;
+  font-weight: 900;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    filter 0.2s ease,
+    box-shadow 0.2s ease;
+
+  box-shadow:
+    0 8px 25px rgba(124, 58, 237, 0.28);
+}
+
+.subscription-island-button span {
+  margin-left: 8px;
+
+  font-size: 17px;
+
+  transition:
+    transform 0.2s ease;
+}
+
+.subscription-island-button:hover {
+  transform: translateY(-2px);
+
+  filter: brightness(1.08);
+
+  box-shadow:
+    0 12px 32px rgba(124, 58, 237, 0.38);
+}
+
+.subscription-island-button:hover span {
+  transform: translateX(4px);
+}
+
+.subscription-island-button:active {
+  transform: scale(0.98);
+}
+
+/* =========================================================
+   CLOSE
+   ========================================================= */
+
+.subscription-island-close {
+  position: absolute;
+
+  top: 10px;
+  right: 12px;
+
+  width: 25px;
+  height: 25px;
+
+  border: none;
+
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.06);
+
+  color: rgba(255, 255, 255, 0.5);
+
+  font-size: 17px;
+
+  line-height: 1;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.subscription-island-close:hover {
+  background: rgba(255, 255, 255, 0.12);
+
+  color: #fff;
+
+  transform: rotate(90deg);
+}
+
+/* =========================================================
+   CLOSING
+   ========================================================= */
+
+.subscription-island-closing {
+  animation:
+    subscriptionIslandOut
+    0.28s
+    ease
+    forwards;
+}
+
+/* =========================================================
+   ANIMATIONS
+   ========================================================= */
+
+@keyframes subscriptionIslandIn {
+  from {
+    opacity: 0;
+
+    transform:
+      translateX(-50%)
+      translateY(80px)
+      scale(0.92);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateX(-50%)
+      translateY(0)
+      scale(1);
+  }
+}
+
+@keyframes subscriptionIslandOut {
+  from {
+    opacity: 1;
+
+    transform:
+      translateX(-50%)
+      translateY(0)
+      scale(1);
+  }
+
+  to {
+    opacity: 0;
+
+    transform:
+      translateX(-50%)
+      translateY(-90px)
+      scale(0.92);
+  }
+}
+
+@keyframes subscriptionIslandFloat {
+  0%,
+  100% {
+    margin-bottom: 0;
+  }
+
+  50% {
+    margin-bottom: 4px;
+  }
+}
+
+@keyframes subscriptionGlow {
+  0%,
+  100% {
+    opacity: 0.45;
+
+    transform:
+      translateX(-50%)
+      scale(1);
+  }
+
+  50% {
+    opacity: 0.8;
+
+    transform:
+      translateX(-50%)
+      scale(1.15);
+  }
+}
+
+@keyframes subscriptionBorder {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes subscriptionBadgePulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.035);
+  }
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+  .subscription-island {
+    bottom: 12px;
+
+    width: calc(100vw - 20px);
+
+    padding:
+      19px
+      17px
+      15px;
+
+    border-radius: 21px;
+  }
+
+  .subscription-island-title {
+    font-size: 20px;
+  }
+
+  .subscription-island-text {
+    font-size: 11px;
+  }
+
+  .subscription-island-button {
+    min-height: 46px;
+
+    font-size: 13px;
+  }
+
+  .subscription-island-features {
+    gap: 5px;
+  }
+
+  .subscription-island-features span {
+    font-size: 9px;
+  }
+}
+
+.argo-filter-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+}
+
+.argo-filter-field {
+  min-width: 0;
+}
+
+.argo-filter-field input,
+.argo-filter-field select {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.argo-filter-range {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+/* Tablet */
+@media (max-width: 900px) {
+  .argo-filter-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Phone */
+@media (max-width: 600px) {
+  .argo-filter-grid {
+    grid-template-columns: 1fr;
+    gap: 9px;
+  }
+
+  .argo-filter-route {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .argo-filter-range {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+}
+
+/* Very small phones */
+@media (max-width: 380px) {
+  .argo-filter-route {
+    grid-template-columns: 1fr;
+  }
+
+  .argo-filter-range {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================================
+   ARGO — MANAGER WHATSAPP BUTTON
+========================================= */
+
+.argo-manager-button {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+
+  width: 58px;
+  height: 58px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #1a1c28;
+  border: 2px solid #c0e040;
+
+  color: #c0e040;
+
+  text-decoration: none;
+
+  z-index: 9999;
+
+  box-shadow:
+    0 8px 30px rgba(26, 28, 40, 0.35),
+    0 0 0 0 rgba(192, 224, 64, 0.45);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+/* Пульсация */
+.argo-manager-button {
+  animation: argo-manager-glow 2.2s infinite;
+}
+
+.argo-manager-button:hover {
+  transform: translateY(-4px) scale(1.05);
+
+  background: #c0e040;
+  color: #1a1c28;
+
+  box-shadow:
+    0 12px 35px rgba(26, 28, 40, 0.4),
+    0 0 0 6px rgba(192, 224, 64, 0.12);
+}
+
+.argo-manager-button:active {
+  transform: scale(0.94);
+}
+
+/* Иконка */
+.argo-manager-icon {
+  position: relative;
+
+  width: 25px;
+  height: 25px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 2;
+}
+
+.argo-manager-icon svg {
+  width: 25px;
+  height: 25px;
+
+  stroke: currentColor;
+  stroke-width: 2;
+}
+
+/* Сыртқы pulse */
+.argo-manager-pulse {
+  position: absolute;
+
+  inset: -5px;
+
+  border-radius: 50%;
+
+  border: 1px solid rgba(192, 224, 64, 0.35);
+
+  pointer-events: none;
+
+  animation: argo-pulse-ring 2.2s infinite;
+}
+
+@keyframes argo-manager-glow {
+  0% {
+    box-shadow:
+      0 8px 30px rgba(26, 28, 40, 0.35),
+      0 0 0 0 rgba(192, 224, 64, 0.35);
+  }
+
+  50% {
+    box-shadow:
+      0 8px 30px rgba(26, 28, 40, 0.35),
+      0 0 0 7px rgba(192, 224, 64, 0.08);
+  }
+
+  100% {
+    box-shadow:
+      0 8px 30px rgba(26, 28, 40, 0.35),
+      0 0 0 0 rgba(192, 224, 64, 0);
+  }
+}
+
+@keyframes argo-pulse-ring {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.7;
+  }
+
+  70% {
+    transform: scale(1.18);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1.18);
+    opacity: 0;
+  }
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 600px) {
+  .argo-manager-button {
+    right: 15px;
+    bottom: 15px;
+
+    width: 52px;
+    height: 52px;
+  }
+
+  .argo-manager-icon,
+  .argo-manager-icon svg {
+    width: 23px;
+    height: 23px;
   }
 }

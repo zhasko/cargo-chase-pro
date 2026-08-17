@@ -145,6 +145,35 @@ function AuthPage() {
     }
   };
 
+  const handleOtpPaste = (
+  e: React.ClipboardEvent<HTMLInputElement>
+) => {
+  e.preventDefault();
+
+  const pasted = e.clipboardData
+    .getData("text")
+    .replace(/\D/g, "")
+    .slice(0, 6);
+
+  if (!pasted) return;
+
+  const next = ["", "", "", "", "", ""];
+
+  pasted.split("").forEach((digit, index) => {
+    next[index] = digit;
+  });
+
+  setOtp(next);
+
+  // Соңғы толтырылған ұяшыққа фокус
+  const lastIndex = Math.min(
+    pasted.length - 1,
+    5
+  );
+
+  otpRefs.current[lastIndex]?.focus();
+};
+
   const verify = async () => {
     const token = otp.join("");
     const normalizedPhone = normalizePhone(phone);
@@ -312,6 +341,7 @@ function AuthPage() {
 
                     if (v && i < 5) otpRefs.current[i + 1]?.focus();
                   }}
+                  onPaste={handleOtpPaste}
                   onKeyDown={(e) => {
                     if (e.key === "Backspace" && !otp[i] && i > 0) {
                       otpRefs.current[i - 1]?.focus();

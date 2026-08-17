@@ -101,19 +101,19 @@ function OrderEdit() {
 
     try {
       await updateOrder(id, {
-        cargo_name: form.cargo_name.trim(),
-        vehicle_type: form.vehicle_type,
-        weight: Number(form.weight),
-        volume: Number(form.volume),
-        from_city: form.from_city,
-        from_address: form.from_address || undefined,
-        to_city: form.to_city,
-        to_address: form.to_address || undefined,
-        loading_date: form.loading_date,
-        price: form.negotiable ? undefined : Number(form.price),
-        negotiable: form.negotiable,
-        comment: form.comment || undefined,
-      });
+  cargo_name: form.cargo_name.trim(),
+  vehicle_type: form.vehicle_type,
+  weight: Number(form.weight),
+  volume: Number(form.volume),
+  from_city: form.from_city,
+  from_address: form.from_address || undefined,
+  to_city: form.to_city,
+  to_address: form.to_address || undefined,
+  loading_date: form.loading_date,
+  price: form.negotiable ? undefined : Number(form.price),
+  negotiable: form.negotiable,
+  comment: form.comment || undefined,
+});
 
       await qc.invalidateQueries({ queryKey: ["order", id] });
       await qc.invalidateQueries({ queryKey: ["my-orders"] });

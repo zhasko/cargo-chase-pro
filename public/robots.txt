@@ -8,6 +8,5 @@ Disallow: /settings
 Disallow: /my-cargo
 Disallow: /auth
 Disallow: /favorites
-Disallow: /notifications
 Disallow: /complaints
 Disallow: /statistics

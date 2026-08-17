@@ -22,8 +22,8 @@ import { Route as MyCargoRouteImport } from './routes/my-cargo'
 import { Route as FavoritesRouteImport } from './routes/favorites'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as ContactRouteImport } from './routes/contact'
-import { Route as ComplaintsRouteImport } from './routes/complaints'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as ArgoControlRouteImport } from './routes/argo-control'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TrucksIndexRouteImport } from './routes/trucks.index'
@@ -100,14 +100,14 @@ const ContactRoute = ContactRouteImport.update({
   path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ComplaintsRoute = ComplaintsRouteImport.update({
-  id: '/complaints',
-  path: '/complaints',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ArgoControlRoute = ArgoControlRouteImport.update({
+  id: '/argo-control',
+  path: '/argo-control',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -164,8 +164,8 @@ const OrdersIdEditRoute = OrdersIdEditRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/argo-control': typeof ArgoControlRoute
   '/auth': typeof AuthRoute
-  '/complaints': typeof ComplaintsRoute
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
   '/favorites': typeof FavoritesRoute
@@ -191,8 +191,8 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/argo-control': typeof ArgoControlRoute
   '/auth': typeof AuthRoute
-  '/complaints': typeof ComplaintsRoute
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
   '/favorites': typeof FavoritesRoute
@@ -219,8 +219,8 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/argo-control': typeof ArgoControlRoute
   '/auth': typeof AuthRoute
-  '/complaints': typeof ComplaintsRoute
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
   '/favorites': typeof FavoritesRoute
@@ -248,8 +248,8 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
+    | '/argo-control'
     | '/auth'
-    | '/complaints'
     | '/contact'
     | '/faq'
     | '/favorites'
@@ -275,8 +275,8 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/admin'
+    | '/argo-control'
     | '/auth'
-    | '/complaints'
     | '/contact'
     | '/faq'
     | '/favorites'
@@ -302,8 +302,8 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/admin'
+    | '/argo-control'
     | '/auth'
-    | '/complaints'
     | '/contact'
     | '/faq'
     | '/favorites'
@@ -330,8 +330,8 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
+  ArgoControlRoute: typeof ArgoControlRoute
   AuthRoute: typeof AuthRoute
-  ComplaintsRoute: typeof ComplaintsRoute
   ContactRoute: typeof ContactRoute
   FaqRoute: typeof FaqRoute
   FavoritesRoute: typeof FavoritesRoute
@@ -446,18 +446,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/complaints': {
-      id: '/complaints'
-      path: '/complaints'
-      fullPath: '/complaints'
-      preLoaderRoute: typeof ComplaintsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/auth': {
       id: '/auth'
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/argo-control': {
+      id: '/argo-control'
+      path: '/argo-control'
+      fullPath: '/argo-control'
+      preLoaderRoute: typeof ArgoControlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -560,8 +560,8 @@ const TrucksIdRouteWithChildren = TrucksIdRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
+  ArgoControlRoute: ArgoControlRoute,
   AuthRoute: AuthRoute,
-  ComplaintsRoute: ComplaintsRoute,
   ContactRoute: ContactRoute,
   FaqRoute: FaqRoute,
   FavoritesRoute: FavoritesRoute,

@@ -1,5 +1,5 @@
 import { useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { kzt, shortDate } from "@/lib/format";
 import { useI18n } from "@/lib/i18n";
@@ -12,11 +12,47 @@ export function CargoCard({ order }: { order: Order }) {
   const { t } = useI18n();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [fav, setFav] = useState(() => listFavorites().includes(order.id));
+
+  const [fav, setFav] = useState(false);
+  const [favBusy, setFavBusy] = useState(false);
 
   const orderPath = `/orders/${order.id}`;
 
-  const onFav = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  // Supabase-тан осы қолданушының таңдаулысын тексеру
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadFavorite = async () => {
+      if (!user?.id) {
+        setFav(false);
+        return;
+      }
+
+      try {
+        const favorites = await listFavorites(user.id);
+
+        if (!cancelled) {
+          setFav(favorites.includes(order.id));
+        }
+      } catch (error) {
+        console.error("load favorite error:", error);
+
+        if (!cancelled) {
+          setFav(false);
+        }
+      }
+    };
+
+    loadFavorite();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [user?.id, order.id]);
+
+  const onFav = async (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
     e.stopPropagation();
 
     if (!user) {
@@ -27,9 +63,30 @@ export function CargoCard({ order }: { order: Order }) {
       return;
     }
 
-    const next = await toggleFavorite(order.id);
-    setFav(next);
-    toast.success(next ? "Таңдаулыға қосылды" : "Таңдаулыдан алынды");
+    if (favBusy) return;
+
+    setFavBusy(true);
+
+    try {
+      const next = await toggleFavorite(user.id, order.id);
+
+      setFav(next);
+
+      toast.success(
+        next
+          ? "Таңдаулыға қосылды"
+          : "Таңдаулыдан алынды"
+      );
+    } catch (error: any) {
+      console.error("toggle favorite error:", error);
+
+      toast.error(
+        error?.message ||
+          "Таңдаулыларды өзгерту кезінде қате шықты"
+      );
+    } finally {
+      setFavBusy(false);
+    }
   };
 
   return (
@@ -63,7 +120,15 @@ export function CargoCard({ order }: { order: Order }) {
       >
         <div className="cargo-card-route">
           <span>{order.from_city}</span>
-          <Icon.arrow style={{ width: 16, height: 16, flexShrink: 0 }} />
+
+          <Icon.arrow
+            style={{
+              width: 16,
+              height: 16,
+              flexShrink: 0,
+            }}
+          />
+
           <span>{order.to_city}</span>
         </div>
 
@@ -71,31 +136,64 @@ export function CargoCard({ order }: { order: Order }) {
           type="button"
           className={`fav-btn${fav ? " active" : ""}`}
           onClick={onFav}
-          aria-label="favorite"
+          disabled={favBusy}
+          aria-label={
+            fav
+              ? "Таңдаулыдан алу"
+              : "Таңдаулыға қосу"
+          }
         >
-          {fav ? <Icon.heartFilled /> : <Icon.heart />}
+          {fav ? (
+            <Icon.heartFilled />
+          ) : (
+            <Icon.heart />
+          )}
         </button>
       </div>
 
-      <div className="cargo-card-name">{order.cargo_name}</div>
+      <div className="cargo-card-name">
+        {order.cargo_name}
+      </div>
 
       <div className="cargo-chips">
-        <span className="chip">{order.vehicle_type}</span>
-        <span className="chip">{order.weight} т</span>
-        <span className="chip">{order.volume} м³</span>
         <span className="chip">
-          <Icon.calendar style={{ width: 11, height: 11 }} />{" "}
+          {order.vehicle_type}
+        </span>
+
+        <span className="chip">
+          {order.weight} т
+        </span>
+
+        <span className="chip">
+          {order.volume} м³
+        </span>
+
+        <span className="chip">
+          <Icon.calendar
+            style={{
+              width: 11,
+              height: 11,
+            }}
+          />{" "}
           {shortDate(order.loading_date)}
         </span>
       </div>
 
       <div className="cargo-bottom">
         <div className="cargo-price">
-          {order.negotiable ? t("order.negotiable") : kzt(order.price)}
+          {order.negotiable
+            ? t("order.negotiable")
+            : kzt(order.price)}
         </div>
 
         <span className="chip">
-          <Icon.eye style={{ width: 11, height: 11 }} /> {order.views}
+          <Icon.eye
+            style={{
+              width: 11,
+              height: 11,
+            }}
+          />{" "}
+          {order.views}
         </span>
       </div>
     </div>
