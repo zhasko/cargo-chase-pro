@@ -525,7 +525,7 @@ export async function updateUserRole(userId: string, role: "driver" | "cargo_own
 
 // ─── Subscriptions / Supabase ───
 
-export async function getSubscription(userId: string): Promise<Subscription | undefined> {
+export async function getSubscription(userId: string): Promise<Subscription | null> {
   const { data, error } = await supabase
     .from("subscriptions")
     .select("*")
@@ -536,10 +536,15 @@ export async function getSubscription(userId: string): Promise<Subscription | un
     console.error("getSubscription error:", error);
 
     const db = load();
-    return db.subOverrides[userId] || MOCK_SUBSCRIPTIONS.find((s) => s.user_id === userId);
+
+    return (
+      db.subOverrides[userId] ||
+      MOCK_SUBSCRIPTIONS.find((s) => s.user_id === userId) ||
+      null
+    );
   }
 
-  return data ? mapSubscription(data) : undefined;
+  return data ? mapSubscription(data) : null;
 }
 
 export async function isSubscriptionActiveAsync(userId: string): Promise<boolean> {
@@ -650,16 +655,80 @@ export async function extendSubscription(userId: string, days: number): Promise<
 }
 
 // ─── Notifications / mock ───
+// ─── Notifications / Supabase ───
 
-export async function listNotifications(userId: string): Promise<Notification[]> {
-  const db = load();
+export async function listNotifications(
+  userId: string
+): Promise<Notification[]> {
+  const { data, error } = await supabase
+    .from("notifications")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
 
-  return delay(
-    MOCK_NOTIFICATIONS.filter((n) => n.user_id === userId).map((n) => ({
-      ...n,
-      read: n.read || db.notifRead.includes(n.id),
-    }))
-  );
+  if (error) {
+    console.error("listNotifications error:", error);
+    return [];
+  }
+
+  return (data || []).map((row: any) => ({
+    id: row.id,
+    user_id: row.user_id,
+    title: row.title,
+    body: row.body,
+    type: row.type,
+    read: Boolean(row.read),
+    created_at: row.created_at,
+  }));
+}
+
+export async function markNotificationRead(
+  notificationId: string,
+  userId: string
+): Promise<void> {
+  const { error } = await supabase
+    .from("notifications")
+    .update({ read: true })
+    .eq("id", notificationId)
+    .eq("user_id", userId);
+
+  if (error) {
+    console.error("markNotificationRead error:", error);
+  }
+}
+
+export async function markAllNotificationsRead(
+  userId: string
+): Promise<void> {
+  const { error } = await supabase
+    .from("notifications")
+    .update({ read: true })
+    .eq("user_id", userId)
+    .eq("read", false);
+
+  if (error) {
+    console.error("markAllNotificationsRead error:", error);
+  }
+}
+
+export async function countUnreadNotifications(
+  userId: string
+): Promise<number> {
+  const { count, error } = await supabase
+    .from("notifications")
+    .select("id", {
+      count: "exact",
+      head: true,
+    })
+    .eq("user_id", userId)
+    .eq("read", false);
+
+  if (error) {
+    console.error("countUnreadNotifications error:", error);
+    return 0;
+  }
+
+  return count ?? 0;
 }
 
 // ─── Payments / mock ───

@@ -12,8 +12,13 @@ const AUTH_DRAFT_KEY = "argo_auth_draft_v1";
 const WHATSAPP_BOT_NUMBER = "77011250468";
 
 export const Route = createFileRoute("/auth")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    redirect: typeof search.redirect === "string" ? search.redirect : "/",
+  validateSearch: (
+    search: Record<string, unknown>
+  ): { redirect?: string } => ({
+    redirect:
+      typeof search.redirect === "string"
+        ? search.redirect
+        : undefined,
   }),
   head: () => ({
     meta: [
